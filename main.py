@@ -8,19 +8,20 @@ from lotusvis.plot_flow import *
 from lotusvis.flow_field import *
 
 
-def fluid_vis(sim_dir, length_scale):
+def fluid_vis():
+    try:
+        sim_dir = str(sys.argv[2])
+    except IndexError:
+        sim_dir = os.getcwd()
+    length_scale = sys.argv[1]
     os.chdir(sim_dir)
-    print(os.getcwd(), length_scale)
     os.system('mkdir -p vis_dump')
-    plot = Plots(data_root, 'fluid', length_scale=length_scale)
-    plot.plot_vort(os.path.join(data_root, 'vis_dump/vort.png'))
-    plot.plot_mag(os.path.join(data_root, 'vis_dump/mag.png'))
-    plot.plot_pressure(os.path.join(data_root, 'vis_dump/pressure.png'))
+    plot = Plots(sim_dir, 'fluid', length_scale=length_scale)
+    plot.plot_vort(os.path.join(sim_dir, 'vis_dump/vort.png'))
+    plot.plot_mag(os.path.join(sim_dir, 'vis_dump/mag.png'))
+    plot.plot_pressure(os.path.join(sim_dir, 'vis_dump/pressure.png'))
 
 
 if __name__ == "__main__":
-    plt.style.use(['science', 'grid'])
-    data_root = '/run/user/1000/gvfs/sftp:host=iridis5_d.soton.ac.uk,user=jmom1n15/' \
-                'scratch/jmom1n15/Lotus/swimming_plate/rough/res_test/batch0/512'
-    fluid_vis(data_root, 512)
+    fluid_vis()
 
