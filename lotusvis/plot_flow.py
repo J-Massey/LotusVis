@@ -23,7 +23,7 @@ def _rec(theta):
 
 
 class Plots(FlowBase):
-    def __init__(self, sim_dir, fn_root, length_scale, **kwargs):
+    def __init__(self, sim_dir, fn_root, length_scale, cmap=None):
         """
         Takes an input from the class postproc.flow_field and plots it with various options
         Args:
@@ -32,9 +32,8 @@ class Plots(FlowBase):
             **kwargs: various options
         """
         super().__init__(sim_dir, fn_root, length_scale)
-        self.cmap = kwargs.get('cmap', None)
+        self.cmap = cmap
         self.mag = np.sqrt(self.V ** 2 + self.U ** 2)
-        self.kwargs = kwargs
 
     @property
     def vort(self):
@@ -42,20 +41,20 @@ class Plots(FlowBase):
         du_dy = np.gradient(self.U, axis=1, edge_order=2)
         return dv_dx - du_dy
 
-    def plot_mag(self, fn_save):
+    def plot_mag(self, fn_save, **kwargs):
         plt.style.use(['science', 'grid'])
         fig, ax = plt.subplots(figsize=(7, 5))
         divider = make_axes_locatable(ax)
         # Plot the window of interest
-        ax.set_xlim(self.kwargs.get('xlim', (-0.2, 2.3)))
-        ax.set_ylim(self.kwargs.get('ylim', (-0.6, 0.6)))
+        ax.set_xlim(kwargs.get('xlim', (-0.8, 1.5)))
+        ax.set_ylim(kwargs.get('ylim', (-0.4, 0.6)))
 
         lim = [0, np.max(self.mag)]
-        lim = self.kwargs.get('lims', lim)
+        lim = kwargs.get('lims', lim)
 
         norm = colors.Normalize(vmin=lim[0], vmax=lim[1])
-        levels = self.kwargs.get('levels', 101)
-        step = self.kwargs.get('step', None)
+        levels = kwargs.get('levels', 101)
+        step = kwargs.get('step', None)
         if step is not None:
             levels = np.arange(lim[0], lim[1] + step, step)
         else:
@@ -80,20 +79,20 @@ class Plots(FlowBase):
         plt.savefig(fn_save, dpi=300, transparent=True)
         plt.show()
 
-    def plot_vort(self, fn_save):
+    def plot_vort(self, fn_save, **kwargs):
         plt.style.use(['science', 'grid'])
         fig, ax = plt.subplots(figsize=(7, 5))
         divider = make_axes_locatable(ax)
         # Plot the window of interest
-        ax.set_xlim(self.kwargs.get('xlim', (-0.2, 2.3)))
-        ax.set_ylim(self.kwargs.get('ylim', (-0.6, 0.6)))
+        ax.set_xlim(kwargs.get('xlim', (-0.8, 1.5)))
+        ax.set_ylim(kwargs.get('ylim', (-0.4, 0.6)))
 
         lim = [np.min(self.vort), np.max(self.vort)]
-        lim = self.kwargs.get('lims', lim)
+        lim = kwargs.get('lims', lim)
 
         norm = colors.Normalize(vmin=lim[0], vmax=lim[1])
-        levels = self.kwargs.get('levels', 101)
-        step = self.kwargs.get('step', None)
+        levels = kwargs.get('levels', 101)
+        step = kwargs.get('step', None)
         if step is not None:
             levels = np.arange(lim[0], lim[1] + step, step)
         else:
@@ -105,6 +104,44 @@ class Plots(FlowBase):
             _cmap = self.cmap
 
         cs = ax.contourf(self.X, self.Y, np.transpose(self.vort),
+                         levels=levels, vmin=lim[0], vmax=lim[1],
+                         norm=norm, cmap=_cmap, extend='both')
+        ax_cb = divider.new_horizontal(size="5%", pad=0.05)
+        fig.add_axes(ax_cb)
+        plt.colorbar(cs, cax=ax_cb)
+        ax_cb.yaxis.tick_right()
+        ax_cb.yaxis.set_tick_params(labelright=True)
+        # plt.setp(ax_cb.get_yticklabels()[::2], visible=False)
+        ax.set_aspect(1)
+
+        plt.savefig(fn_save, dpi=300, transparent=True)
+        plt.show()
+
+    def plot_pressure(self, fn_save, **kwargs):
+        plt.style.use(['science', 'grid'])
+        fig, ax = plt.subplots(figsize=(7, 5))
+        divider = make_axes_locatable(ax)
+        # Plot the window of interest
+        ax.set_xlim(kwargs.get('xlim', (-0.8, 1.5)))
+        ax.set_ylim(kwargs.get('ylim', (-0.4, 0.6)))
+
+        lim = [np.min(self.vort), np.max(self.vort)]
+        lim = kwargs.get('lims', lim)
+
+        norm = colors.Normalize(vmin=lim[0], vmax=lim[1])
+        levels = kwargs.get('levels', 101)
+        step = kwargs.get('step', None)
+        if step is not None:
+            levels = np.arange(lim[0], lim[1] + step, step)
+        else:
+            levels = np.linspace(lim[0], lim[1], levels)
+
+        if not self.cmap:
+            _cmap = sns.color_palette("seismic", as_cmap=True)
+        else:
+            _cmap = self.cmap
+
+        cs = ax.contourf(self.X, self.Y, np.transpose(self.p),
                          levels=levels, vmin=lim[0], vmax=lim[1],
                          norm=norm, cmap=_cmap, extend='both')
         ax_cb = divider.new_horizontal(size="5%", pad=0.05)

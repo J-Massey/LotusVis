@@ -20,37 +20,47 @@ class FlowBase:
 
     def __init__(self, sim_dir, fn_root, length_scale, **kwargs):
         self.sim_dir = sim_dir
-        datp_dir = os.path.join(sim_dir, 'datp')
-        rot = kwargs.get('rotation', 0)
-        self.rot = rot / 180 * np.pi
+        self.datp_dir = os.path.join(sim_dir, 'datp')
         self.length_scale = length_scale
-        # Find what you're looking for
-        fns = [fn for fn in os.listdir(datp_dir) if fn.startswith(fn_root) and fn.endswith('.pvtr')]
-        # Sort files
-        fns = Tcl().call('lsort', '-dict', fns)
+
+        fns = [fn for fn in os.listdir(self.datp_dir) if fn.startswith(fn_root) and fn.endswith('.pvtr')]
+        self.fns = Tcl().call('lsort', '-dict', fns)
+
+        self.X, self.Y, self.U, self.V, self.p = None, None, None, None, None
+        t_avg = kwargs.get('t_avg', False)
 
         if len(fns) > 1:
-            print("More than one fn with this name. Taking time average.")
-            # Store snapshots of field
-            self.snaps = []
-            for fn in fns:
-                snap = io.format_2d(os.path.join(datp_dir, fn), self.length_scale, rotation=rot)
-                self.snaps.append(snap)
-            del snap
-            # Time average the flow field snaps
-            mean_t = np.mean(np.array(self.snaps).T, axis=1)
-            self.X, self.Y = mean_t[0:2]
-            self.u, self.v, self.w = mean_t[2:-1]
-            self.U, self.V = np.mean(self.u, axis=2), np.mean(self.v, axis=2)
-            self.p = np.mean(mean_t[-1], axis=0)
-            del mean_t
+            if t_avg:
+                props = self.time_avg()
+            else:
+                props = self.single_instance()
         else:
             assert (len(fns) > 0), 'You dont have ' + fn_root + '.pvtr in your datp folder'
-            self.X, self.Y, self.U, self.V, self.W, self.p = io.format_2d(os.path.join(datp_dir, fns[0]),
-                                                                                     self.length_scale, rotation=rot)
-            self.U, self.V = np.squeeze(self.U), np.squeeze(self.V)
-            self.p = np.squeeze(self.p)
-        self.z = np.ones(np.shape(self.X))
+            props = self.single_instance()
+
+        self.assign_props(props)
+
+    def assign_props(self, snap):
+        self.X, self.Y = snap[0:2]
+        u, v, _ = snap[2:-1]
+        self.U, self.V = np.mean(u, axis=2), np.mean(v, axis=2)
+        self.p = np.mean(snap[-1], axis=0)
+        del u, v, snap
+
+    def single_instance(self):
+        snap = io.format_2d(os.path.join(self.datp_dir, self.fns[-1]), self.length_scale)
+        snap = np.array(snap).T
+        return snap
+
+    def time_avg(self):
+        snaps = []
+        for fn in self.fns:
+            snap = io.format_2d(os.path.join(self.datp_dir, fn), self.length_scale)
+            snaps.append(snap)
+        del snap
+        # Time average the flow field snaps
+        mean_t = np.mean(np.array(snaps).T, axis=1)
+        return mean_t
 
     def rms(self):
         means = np.mean(np.array(self.snaps).T, axis=1)[2:-1]
@@ -71,9 +81,3 @@ class FlowBase:
         del mag, mean
 
         return np.mean(np.mean(fluc, axis=0), axis=2)
-
-    def vort_mag(self):
-        return io.vort(self.U, self.V, self.W, x=self.X, y=self.Y, z=self.z)
-
-    def down_sample(self, skip=1):
-        self.X, self.Y, self.U, self.V, self.p = np.mean(np.array(self.snaps[::(skip + 1)]).T, axis=1)

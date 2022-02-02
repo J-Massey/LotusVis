@@ -26,7 +26,7 @@ if __name__ == "__main__":
                 'research_filesystem/flat_plate/AoA_8/smooth/res_test/batch1/192'
     # data_root = sys.argv[1]
     # length_scale = sys.argv[2]
-    Plots(data_root, 'fluid', length_scale=192) \
-        .plot_vort(os.path.join(data_root, 'vis_dump/vort.png'))
-    Plots(data_root, 'fluid', length_scale=192, lims=[-0.4, 0.4]) \
-        .plot_mag(os.path.join(data_root, 'vis_dump/vort.png'))
+    plot = Plots(data_root, 'fluid', length_scale=192)
+    plot.plot_vort(os.path.join(data_root, 'vis_dump/vort.png'))
+    plot.plot_mag(os.path.join(data_root, 'vis_dump/mag.png'))
+    plot.plot_pressure(os.path.join(data_root, 'vis_dump/pressure.png'))
