@@ -3,3 +3,4 @@ setuptools~=57.0.0
 vtk~=9.1.0
 matplotlib~=3.5.1
 seaborn~=0.11.2
+SciencePlots~=1.0.9
