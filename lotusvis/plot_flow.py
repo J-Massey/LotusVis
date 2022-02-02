@@ -5,14 +5,14 @@
 @contact: jmom1n15@soton.ac.uk
 """
 
+import matplotlib.colors as colors
+import matplotlib.patches as patches
 # Imports
 import matplotlib.pyplot as plt
-import matplotlib.patches as patches
 import numpy as np
-import matplotlib.colors as colors
 import seaborn as sns
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-from matplotlib.collections import LineCollection
+
 from lotusvis.flow_field import FlowBase
 
 
@@ -24,13 +24,6 @@ def _rec(theta):
 
 class Plots(FlowBase):
     def __init__(self, sim_dir, fn_root, length_scale, cmap=None):
-        """
-        Takes an input from the class postproc.flow_field and plots it with various options
-        Args:
-            data:
-            interest:
-            **kwargs: various options
-        """
         super().__init__(sim_dir, fn_root, length_scale)
         self.cmap = cmap
         self.mag = np.sqrt(self.V ** 2 + self.U ** 2)
