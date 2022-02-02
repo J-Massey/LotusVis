@@ -15,9 +15,9 @@ Running `main.py` calls the three plot functions. You only need to parse your ma
 ## Implementation
 Install the package
 
-`git clone https://github.com/J-Massey/lotusvis.git
+``git clone https://github.com/J-Massey/lotusvis.git
 cd lotusvis
-sudo pip3 install -e .`
+sudo pip3 install -e .``
 
 ## To do
 Figure out how to add to venv on iridis
