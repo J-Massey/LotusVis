@@ -12,7 +12,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-
 from lotusvis.flow_field import FlowBase
 
 
@@ -39,8 +38,8 @@ class Plots(FlowBase):
         fig, ax = plt.subplots(figsize=(7, 5))
         divider = make_axes_locatable(ax)
         # Plot the window of interest
-        ax.set_xlim(kwargs.get('xlim', (-0.8, 1.5)))
-        ax.set_ylim(kwargs.get('ylim', (-0.4, 0.6)))
+        ax.set_xlim(kwargs.get('xlim', (-0.5, 2.5)))
+        ax.set_ylim(kwargs.get('ylim', (-0.5, 0.5)))
 
         lim = [0, np.max(self.mag)]
         lim = kwargs.get('lims', lim)
@@ -77,8 +76,8 @@ class Plots(FlowBase):
         fig, ax = plt.subplots(figsize=(7, 5))
         divider = make_axes_locatable(ax)
         # Plot the window of interest
-        ax.set_xlim(kwargs.get('xlim', (-0.8, 1.5)))
-        ax.set_ylim(kwargs.get('ylim', (-0.4, 0.6)))
+        ax.set_xlim(kwargs.get('xlim', (-0.5, 2.5)))
+        ax.set_ylim(kwargs.get('ylim', (-0.5, 0.5)))
 
         lim = [np.min(self.vort), np.max(self.vort)]
         lim = kwargs.get('lims', lim)
@@ -108,15 +107,15 @@ class Plots(FlowBase):
         ax.set_aspect(1)
 
         plt.savefig(fn_save, dpi=300, transparent=True)
-        plt.show()
+        # plt.show()
 
     def plot_pressure(self, fn_save, **kwargs):
         plt.style.use(['science', 'grid'])
         fig, ax = plt.subplots(figsize=(7, 5))
         divider = make_axes_locatable(ax)
         # Plot the window of interest
-        ax.set_xlim(kwargs.get('xlim', (-0.8, 1.5)))
-        ax.set_ylim(kwargs.get('ylim', (-0.4, 0.6)))
+        ax.set_xlim(kwargs.get('xlim', (-0.5, 2.5)))
+        ax.set_ylim(kwargs.get('ylim', (-0.5, 0.5)))
 
         lim = [np.min(self.vort), np.max(self.vort)]
         lim = kwargs.get('lims', lim)
@@ -146,64 +145,64 @@ class Plots(FlowBase):
         ax.set_aspect(1)
 
         plt.savefig(fn_save, dpi=300, transparent=True)
-        plt.show()
+        # plt.show()
 
-    def plot_line(self, fn_save, **kwargs):
-        plt.style.use(['science', 'grid'])
-        fig, ax = plt.subplots(figsize=(8.5, 6))
-        plt.title(self.title)
-        divider = make_axes_locatable(ax)
-        # Plot the window of interest
-        ax.set_xlim(kwargs.get('xlim', (-0.2, 2.3)))
-        ax.set_ylim(-0.5, 0.5)
-
-        if kwargs.get('rec', False):
-            rec = _rec(theta=12)
-            ax.add_patch(rec)
-
-        lim = [np.min(self.vals), np.max(self.vals)]
-        lim = kwargs.get('lims', lim)
-        # Put limits consistent with experimental data
-        norm = colors.Normalize(vmin=lim[0], vmax=lim[1])
-        levels = kwargs.get('levels', 6)
-        step = kwargs.get('step', None)
-        if step is not None:
-            lvls = np.arange(lim[0], lim[1] + step, step)
-        else:
-            lvls = np.linspace(lim[0], lim[1], levels)
-
-        cs = ax.contour(self.X, self.Y, np.transpose(self.vals),
-                        levels=levels, vmin=lim[0], vmax=lim[1],
-                        norm=norm, colors=kwargs.get('colors', sns.color_palette("tab10")))
-        ax.clabel(cs, cs.levels[2::2], inline_spacing=1, inline=1, fontsize=12, fmt='%1.2f')
-        del self.X, self.Y, self.vals
-        ax.set_aspect(1)
-
-        plt.savefig(fn_save, dpi=300, transparent=True)
-        plt.show()
-
-    def plot_grid(self, fn_save):
-        plt.style.use(['science'])
-        fig, ax = plt.subplots(figsize=(7, 5))
-        ax.set_xlim((-4, 6))
-        ax.set_ylim((-2.5, 2.5))
-
-        ax.set_xlabel(r'$x/c$')
-        ax.set_ylabel(r'$y/c$')
-
-        ax.plot(self.X, self.Y, c='k', linewidth=0.2)
-        ax.plot(np.transpose(self.X), np.transpose(self.Y), c='k', linewidth=0.2)
-
-        rec = _rec(theta=0)
-        ax.add_patch(rec)
-        # ax.set_xticks()
-
-        del self.X, self.Y, self.vals
-        ax.set_aspect(1)
-        ax.grid(False)
-
-        plt.savefig(fn_save, dpi=800, transparent=True)
-        plt.show()
+    # def plot_line(self, fn_save, **kwargs):
+    #     plt.style.use(['science', 'grid'])
+    #     fig, ax = plt.subplots(figsize=(8.5, 6))
+    #     plt.title(self.title)
+    #     divider = make_axes_locatable(ax)
+    #     # Plot the window of interest
+    #     ax.set_xlim(kwargs.get('xlim', (-0.2, 2.3)))
+    #     ax.set_ylim(-0.5, 0.5)
+    #
+    #     if kwargs.get('rec', False):
+    #         rec = _rec(theta=12)
+    #         ax.add_patch(rec)
+    #
+    #     lim = [np.min(self.vals), np.max(self.vals)]
+    #     lim = kwargs.get('lims', lim)
+    #     # Put limits consistent with experimental data
+    #     norm = colors.Normalize(vmin=lim[0], vmax=lim[1])
+    #     levels = kwargs.get('levels', 6)
+    #     step = kwargs.get('step', None)
+    #     if step is not None:
+    #         lvls = np.arange(lim[0], lim[1] + step, step)
+    #     else:
+    #         lvls = np.linspace(lim[0], lim[1], levels)
+    #
+    #     cs = ax.contour(self.X, self.Y, np.transpose(self.vals),
+    #                     levels=levels, vmin=lim[0], vmax=lim[1],
+    #                     norm=norm, colors=kwargs.get('colors', sns.color_palette("tab10")))
+    #     ax.clabel(cs, cs.levels[2::2], inline_spacing=1, inline=1, fontsize=12, fmt='%1.2f')
+    #     del self.X, self.Y, self.vals
+    #     ax.set_aspect(1)
+    #
+    #     plt.savefig(fn_save, dpi=300, transparent=True)
+    #     # plt.show()
+    #
+    # def plot_grid(self, fn_save):
+    #     plt.style.use(['science'])
+    #     fig, ax = plt.subplots(figsize=(7, 5))
+    #     ax.set_xlim((-4, 6))
+    #     ax.set_ylim((-2.5, 2.5))
+    #
+    #     ax.set_xlabel(r'$x/c$')
+    #     ax.set_ylabel(r'$y/c$')
+    #
+    #     ax.plot(self.X, self.Y, c='k', linewidth=0.2)
+    #     ax.plot(np.transpose(self.X), np.transpose(self.Y), c='k', linewidth=0.2)
+    #
+    #     rec = _rec(theta=0)
+    #     ax.add_patch(rec)
+    #     # ax.set_xticks()
+    #
+    #     del self.X, self.Y, self.vals
+    #     ax.set_aspect(1)
+    #     ax.grid(False)
+    #
+    #     plt.savefig(fn_save, dpi=800, transparent=True)
+    #     plt.show()
 
     def stack_contours(self, interesting_contour):
         """
