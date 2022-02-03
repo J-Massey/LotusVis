@@ -27,7 +27,6 @@ Or on iridis
 
 ## To do
 Deal better with multiple time instances
-
 	 - Integrate animation option
 	 - POD / DMD ?
 	 
