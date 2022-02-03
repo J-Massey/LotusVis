@@ -69,7 +69,7 @@ class Plots(FlowBase):
         ax.set_aspect(1)
 
         plt.savefig(fn_save, dpi=300, transparent=True)
-        plt.show()
+        plt.close()
 
     def plot_vort(self, fn_save, **kwargs):
         plt.style.use(['science', 'grid'])
@@ -107,7 +107,7 @@ class Plots(FlowBase):
         ax.set_aspect(1)
 
         plt.savefig(fn_save, dpi=300, transparent=True)
-        # plt.show()
+        plt.close()
 
     def plot_pressure(self, fn_save, **kwargs):
         plt.style.use(['science', 'grid'])
@@ -145,7 +145,7 @@ class Plots(FlowBase):
         ax.set_aspect(1)
 
         plt.savefig(fn_save, dpi=300, transparent=True)
-        # plt.show()
+        plt.close()
 
     # def plot_line(self, fn_save, **kwargs):
     #     plt.style.use(['science', 'grid'])
@@ -179,7 +179,7 @@ class Plots(FlowBase):
     #     ax.set_aspect(1)
     #
     #     plt.savefig(fn_save, dpi=300, transparent=True)
-    #     # plt.show()
+    #     # plt.close()
     #
     # def plot_grid(self, fn_save):
     #     plt.style.use(['science'])

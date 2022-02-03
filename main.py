@@ -13,7 +13,7 @@ def fluid_vis():
         sim_dir = str(sys.argv[2])
     except IndexError:
         sim_dir = os.getcwd()
-    length_scale = sys.argv[1]
+    length_scale = int(sys.argv[1])
     os.chdir(sim_dir)
     os.system('mkdir -p vis_dump')
     plot = Plots(sim_dir, 'fluid', length_scale=length_scale)
