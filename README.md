@@ -18,7 +18,17 @@ Install the package
 	git clone https://github.com/J-Massey/lotusvis.git
 	cd lotusvis
 	sudo pip3 install -e .
+	
+Or on iridis
+
+	git clone https://github.com/J-Massey/lotusvis.git
+	cd lotusvis
+	pip install --user .
 
 ## To do
-Figure out how to add to venv on iridis
-Set up `plt.style.use(['science', 'grid'])` on iridis to get everything looking good.
+Deal better with multiple time instances
+	 - Integrate animation option
+	 - POD / DMD ?
+	 
+## Not going to do
+Deal with `fort.9`; it's too variable with how you set it up, very simple and most of the time you're comparing with something else anyway.
