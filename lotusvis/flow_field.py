@@ -23,7 +23,7 @@ class FlowBase:
         self.datp_dir = os.path.join(sim_dir, 'datp')
         self.length_scale = length_scale
 
-        print(f'Looking for .pv{ext} files')
+        print(f'Looking for .p{ext} files')
         fns = [fn for fn in os.listdir(self.datp_dir) if fn.startswith(fn_root) and fn.endswith(f'.p{ext}')]
         self.fns = Tcl().call('lsort', '-dict', fns)
 

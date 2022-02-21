@@ -82,7 +82,7 @@ def vti_format_2d(fn, length_scale):
     """
     data = read_vti(fn)
     # Get the grid
-    X, Y, Z = data[2]/length_scale
+    X, Y, Z = data[2]
     print(np.shape(X))
 
     U, V, W = data[0]
