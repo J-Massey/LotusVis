@@ -60,11 +60,12 @@ def read_vti(file):
     sca = np.array(pointData.GetScalars('Pressure')).reshape(sh + (1,))
 
     # Generate grid
-    # nPoints = dat.GetNumberOfPoints()
-    (xmin, xmax, ymin, ymax, zmin, zmax) = data.GetBounds()
-    grid3D = np.mgrid[xmin:xmax + 1, ymin:ymax + 1, zmin:zmax + 1]
+    # get grid
+    x = np.array(data.GetXCoordinates())
+    y = np.array(data.GetYCoordinates())
+    z = np.array(data.GetZCoordinates())
 
-    return np.transpose(np.array(vec), (0, 3, 2, 1)), np.transpose(sca, (0, 3, 2, 1)), grid3D
+    return np.transpose(np.array(vec), (0, 3, 2, 1)), np.transpose(sca, (0, 3, 2, 1)), np.array((x, y, z))
 
 
 def format_2d(fn, length_scale, rotation=0):
