@@ -69,7 +69,7 @@ def read_vti(file):
     # grid3D = np.mgrid[xmin:xmax + 1, ymin:ymax + 1, zmin:zmax + 1]
     gridx, gridy = np.linspace(xmin, xmax, np.shape(U)[0]), np.linspace(ymin, ymax, np.shape(U)[1])
 
-    print(np.shape(U), np.shape(p), np.shape(gridx))
+    print(np.shape(U[0:1]), np.shape(p), np.shape(gridx))
 
     return (U, V, W), p, np.array((gridx, gridy))
 
