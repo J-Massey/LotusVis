@@ -79,7 +79,8 @@ class Plots(FlowBase):
         ax.set_xlim(kwargs.get('xlim', (np.min(self.X), np.max(self.X))))
         ax.set_ylim(kwargs.get('ylim', (np.min(self.Y), np.max(self.Y))))
 
-        lim = [np.min(self.vort), np.max(self.vort)]
+        bounds = np.max(np.array((abs(np.min(self.vort)), np.max(self.vort))))
+        lim = [-bounds, bounds]
         lim = kwargs.get('lims', lim)
 
         norm = colors.Normalize(vmin=lim[0], vmax=lim[1])
@@ -117,7 +118,8 @@ class Plots(FlowBase):
         ax.set_xlim(kwargs.get('xlim', (np.min(self.X), np.max(self.X))))
         ax.set_ylim(kwargs.get('ylim', (np.min(self.Y), np.max(self.Y))))
 
-        lim = [np.min(self.p), np.max(self.p)]
+        bounds = np.max(np.array((abs(np.min(self.p)), np.max(self.p))))
+        lim = [-bounds, bounds]
         lim = kwargs.get('lims', lim)
 
         norm = colors.Normalize(vmin=lim[0], vmax=lim[1])
