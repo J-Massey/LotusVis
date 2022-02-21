@@ -85,6 +85,7 @@ def format_2d(fn, length_scale, rotation=0):
     """
     rot = rotation / 180 * np.pi
     data = read_vtr(fn)
+    print(data[2])
     # Get the grid
     X, Y, z = data[2]
     # X, Y = np.meshgrid(x / length_scale, y / length_scale)
