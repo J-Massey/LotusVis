@@ -6,10 +6,10 @@
 """
 import numpy as np
 import vtk
+import warnings
 
 
 def read_vtr(fn):
-    import warnings
     warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
     reader = vtk.vtkXMLPRectilinearGridReader()
     reader.SetFileName(fn)
@@ -41,6 +41,7 @@ def read_vtr(fn):
 
 
 def read_vti(file):
+    warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
     reader = vtk.vtkXMLPImageDataReader()
     reader.SetFileName(file)
     reader.Update()
