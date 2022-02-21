@@ -95,7 +95,7 @@ class Plots(FlowBase):
         else:
             _cmap = self.cmap
 
-        cs = ax.contourf(np.transpose(self.vort),
+        cs = ax.contourf(self.X, self.Y, np.transpose(self.vort),
                          levels=levels, vmin=lim[0], vmax=lim[1],
                          norm=norm, cmap=_cmap, extend='both')
         ax_cb = divider.new_horizontal(size="5%", pad=0.05)
@@ -117,7 +117,7 @@ class Plots(FlowBase):
         ax.set_xlim(kwargs.get('xlim', (np.min(self.X), np.max(self.X))))
         ax.set_ylim(kwargs.get('ylim', (np.min(self.Y), np.max(self.Y))))
 
-        lim = [np.min(self.vort), np.max(self.vort)]
+        lim = [np.min(self.p), np.max(self.p)]
         lim = kwargs.get('lims', lim)
 
         norm = colors.Normalize(vmin=lim[0], vmax=lim[1])
@@ -133,7 +133,7 @@ class Plots(FlowBase):
         else:
             _cmap = self.cmap
 
-        cs = ax.contourf(np.transpose(self.p),
+        cs = ax.contourf(self.X, self.Y, np.transpose(self.p),
                          levels=levels, vmin=lim[0], vmax=lim[1],
                          norm=norm, cmap=_cmap, extend='both')
         ax_cb = divider.new_horizontal(size="5%", pad=0.05)
