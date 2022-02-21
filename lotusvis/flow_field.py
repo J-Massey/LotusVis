@@ -35,7 +35,7 @@ class FlowBase:
             else:
                 props = self.single_instance()
         else:
-            assert (len(fns) > 0), 'You dont have ' + fn_root + '.pvtr in your datp folder'
+            assert (len(fns) > 0), f'You dont have {fn_root}.pvtr in your {self.datp_dir} folder'
             props = self.single_instance()
 
         self.assign_props(props)
