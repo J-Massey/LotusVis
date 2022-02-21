@@ -38,8 +38,8 @@ class Plots(FlowBase):
         fig, ax = plt.subplots(figsize=(7, 5))
         divider = make_axes_locatable(ax)
         # Plot the window of interest
-        # ax.set_xlim(kwargs.get('xlim', (-0.5, 2.5)))
-        # ax.set_ylim(kwargs.get('ylim', (-0.5, 0.5)))
+        ax.set_xlim(kwargs.get('xlim', (-0.5, 2.5)))
+        ax.set_ylim(kwargs.get('ylim', (-0.5, 0.5)))
 
         lim = [0, np.max(self.mag)]
         lim = kwargs.get('lims', lim)
@@ -57,7 +57,7 @@ class Plots(FlowBase):
         else:
             _cmap = self.cmap
 
-        cs = ax.contourf(np.transpose(self.mag),
+        cs = ax.contourf(self.X, self.Y, np.transpose(self.mag),
                          levels=levels, vmin=lim[0], vmax=lim[1],
                          norm=norm, cmap=_cmap, extend='both')
         ax_cb = divider.new_horizontal(size="5%", pad=0.05)
@@ -76,8 +76,8 @@ class Plots(FlowBase):
         fig, ax = plt.subplots(figsize=(7, 5))
         divider = make_axes_locatable(ax)
         # Plot the window of interest
-        # ax.set_xlim(kwargs.get('xlim', (-0.5, 2.5)))
-        # ax.set_ylim(kwargs.get('ylim', (-0.5, 0.5)))
+        ax.set_xlim(kwargs.get('xlim', (-0.5, 2.5)))
+        ax.set_ylim(kwargs.get('ylim', (-0.5, 0.5)))
 
         lim = [np.min(self.vort), np.max(self.vort)]
         lim = kwargs.get('lims', lim)
@@ -95,7 +95,7 @@ class Plots(FlowBase):
         else:
             _cmap = self.cmap
 
-        cs = ax.contourf(np.transpose(self.vort),
+        cs = ax.contourf(self.X, self.Y, np.transpose(self.vort),
                          levels=levels, vmin=lim[0], vmax=lim[1],
                          norm=norm, cmap=_cmap, extend='both')
         ax_cb = divider.new_horizontal(size="5%", pad=0.05)
@@ -114,8 +114,8 @@ class Plots(FlowBase):
         fig, ax = plt.subplots(figsize=(7, 5))
         divider = make_axes_locatable(ax)
         # Plot the window of interest
-        # ax.set_xlim(kwargs.get('xlim', (-0.5, 2.5)))
-        # ax.set_ylim(kwargs.get('ylim', (-0.5, 0.5)))
+        ax.set_xlim(kwargs.get('xlim', (-0.5, 2.5)))
+        ax.set_ylim(kwargs.get('ylim', (-0.5, 0.5)))
 
         lim = [np.min(self.vort), np.max(self.vort)]
         lim = kwargs.get('lims', lim)
@@ -133,7 +133,7 @@ class Plots(FlowBase):
         else:
             _cmap = self.cmap
 
-        cs = ax.contourf(np.transpose(self.p),
+        cs = ax.contourf(self.X, self.Y, np.transpose(self.p),
                          levels=levels, vmin=lim[0], vmax=lim[1],
                          norm=norm, cmap=_cmap, extend='both')
         ax_cb = divider.new_horizontal(size="5%", pad=0.05)
