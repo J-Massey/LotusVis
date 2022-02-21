@@ -69,7 +69,7 @@ def read_vti(file):
     # nPoints = dat.GetNumberOfPoints()
     xmin, xmax, ymin, ymax, zmin, zmax = data.GetBounds()
     # grid3D = np.mgrid[xmin:xmax + 1, ymin:ymax + 1, zmin:zmax + 1]
-    gridx, gridy = np.linspace(xmin, xmax, np.shape(U[0])), np.linspace(ymin, ymax, np.shape(V[1]))
+    gridx, gridy = np.linspace(xmin, xmax, np.shape(U)[0]), np.linspace(ymin, ymax, np.shape(U)[1])
 
 
     return (U, V, W), p, np.array(gridx, gridy)
