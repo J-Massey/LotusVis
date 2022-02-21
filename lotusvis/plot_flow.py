@@ -38,8 +38,8 @@ class Plots(FlowBase):
         fig, ax = plt.subplots(figsize=(7, 5))
         divider = make_axes_locatable(ax)
         # Plot the window of interest
-        ax.set_xlim(kwargs.get('xlim', None))
-        ax.set_ylim(kwargs.get('ylim', None))
+        ax.set_xlim(kwargs.get('xlim', (np.min(self.X), np.max(self.X))))
+        ax.set_ylim(kwargs.get('ylim', (np.min(self.Y), np.max(self.Y))))
 
         lim = [0, np.max(self.mag)]
         lim = kwargs.get('lims', lim)
@@ -76,8 +76,8 @@ class Plots(FlowBase):
         fig, ax = plt.subplots(figsize=(7, 5))
         divider = make_axes_locatable(ax)
         # Plot the window of interest
-        ax.set_xlim(kwargs.get('xlim', None))
-        ax.set_ylim(kwargs.get('ylim', None))
+        ax.set_xlim(kwargs.get('xlim', (np.min(self.X), np.max(self.X))))
+        ax.set_ylim(kwargs.get('ylim', (np.min(self.Y), np.max(self.Y))))
 
         lim = [np.min(self.vort), np.max(self.vort)]
         lim = kwargs.get('lims', lim)
@@ -114,8 +114,8 @@ class Plots(FlowBase):
         fig, ax = plt.subplots(figsize=(7, 5))
         divider = make_axes_locatable(ax)
         # Plot the window of interest
-        ax.set_xlim(kwargs.get('xlim', None))
-        ax.set_ylim(kwargs.get('ylim', None))
+        ax.set_xlim(kwargs.get('xlim', (np.min(self.X), np.max(self.X))))
+        ax.set_ylim(kwargs.get('ylim', (np.min(self.Y), np.max(self.Y))))
 
         lim = [np.min(self.vort), np.max(self.vort)]
         lim = kwargs.get('lims', lim)
