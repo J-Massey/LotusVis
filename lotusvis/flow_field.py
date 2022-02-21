@@ -43,6 +43,7 @@ class FlowBase:
 
     def assign_props(self, snap):
         self.X, self.Y = snap[0:2]
+        print(np.shape(self.X))
         u, v, _ = snap[2:-1]
         self.U, self.V = np.mean(u, axis=2), np.mean(v, axis=2)
         self.p = np.mean(snap[-1], axis=0)
