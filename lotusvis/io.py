@@ -87,7 +87,7 @@ def vti_format_2d(fn, length_scale):
     U, V, W = data[0]
     p = data[1]
     p = np.reshape(p, [np.shape(p)[0], np.shape(p)[2], np.shape(p)[3]])
-    return X, Y, U, V, W, p
+    return X[0:-1], Y[0:-1], U, V, W, p
 
 
 def vtr_format_2d(fn, length_scale, rotation=0):
