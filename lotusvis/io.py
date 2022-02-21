@@ -63,16 +63,15 @@ def read_vti(file):
     U, V, W = np.transpose(np.array(vec), (0, 3, 2, 1))
     p = np.transpose(sca, (0, 3, 2, 1))
 
-    print(np.shape(U), np.shape(p))
-
     # Generate grid
     # nPoints = dat.GetNumberOfPoints()
     xmin, xmax, ymin, ymax, zmin, zmax = data.GetBounds()
     # grid3D = np.mgrid[xmin:xmax + 1, ymin:ymax + 1, zmin:zmax + 1]
     gridx, gridy = np.linspace(xmin, xmax, np.shape(U)[0]), np.linspace(ymin, ymax, np.shape(U)[1])
 
+    print(np.shape(U), np.shape(p), np.shape(gridx))
 
-    return (U, V, W), p, np.array(gridx, gridy)
+    return (U, V, W), p, np.array((gridx, gridy))
 
 
 def vti_format_2d(fn, length_scale):
