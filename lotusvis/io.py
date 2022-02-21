@@ -67,15 +67,12 @@ def read_vti(file):
     return np.transpose(np.array(vec), (0, 3, 2, 1)), np.transpose(sca, (0, 3, 2, 1)), grid3D
 
 
-def format_2d(fn, length_scale, rotation=0):
+def vti_format_2d(fn, length_scale):
     """
-    Rotates and scales vtr file
+    Rotates and scales vti file
     Args:
         fn: The path to the 'datp' folder
         length_scale: length scale of the simulation
-        rotation: Rotate the grid. If you're running a simulation with
-                  an angle of attack, it's better to rotate the flow than
-                  the foil because of the meshing.
 
     Returns: X, Y - coordinates (useful for indexing)
              U, V - rotated velocity components
@@ -83,20 +80,14 @@ def format_2d(fn, length_scale, rotation=0):
              p    - pressure field
 
     """
-    rot = rotation / 180 * np.pi
-    data = read_vtr(fn)
+    data = read_vti(fn)
     # Get the grid
-    # X, Y, z = data[2]
-    # X, Y = np.meshgrid(x / length_scale, y / length_scale)
-    # X = np.cos(rot) * X + np.sin(rot) * Y
-    # Y = -np.sin(rot) * X + np.cos(rot) * Y
+    X, Y, Z = data[2]/length_scale
 
-    u, v, w = data[0]
-    U = np.cos(rot) * u + np.sin(rot) * v
-    V = -np.sin(rot) * u + np.cos(rot) * v
+    U, V, W = data[0]
     p = data[1]
     p = np.reshape(p, [np.shape(p)[0], np.shape(p)[2], np.shape(p)[3]])
-    return U, V, w, p
+    return X, Y, U, V, W, p
 
 
 def vtr_format_2d(fn, length_scale, rotation=0):

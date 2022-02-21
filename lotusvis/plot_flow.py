@@ -38,8 +38,8 @@ class Plots(FlowBase):
         fig, ax = plt.subplots(figsize=(7, 5))
         divider = make_axes_locatable(ax)
         # Plot the window of interest
-        # ax.set_xlim(kwargs.get('xlim', (-0.5, 2.5)))
-        # ax.set_ylim(kwargs.get('ylim', (-0.5, 0.5)))
+        ax.set_xlim(kwargs.get('xlim', None))
+        ax.set_ylim(kwargs.get('ylim', None))
 
         lim = [0, np.max(self.mag)]
         lim = kwargs.get('lims', lim)
@@ -57,7 +57,7 @@ class Plots(FlowBase):
         else:
             _cmap = self.cmap
 
-        cs = ax.contourf(np.transpose(self.mag),
+        cs = ax.contourf(self.X, self.Y, np.transpose(self.mag),
                          levels=levels, vmin=lim[0], vmax=lim[1],
                          norm=norm, cmap=_cmap, extend='both')
         ax_cb = divider.new_horizontal(size="5%", pad=0.05)
@@ -69,15 +69,15 @@ class Plots(FlowBase):
         ax.set_aspect(1)
 
         plt.savefig(fn_save, dpi=300, transparent=True)
-        plt.close()
+        plt.show()
 
     def plot_vort(self, fn_save, **kwargs):
         plt.style.use(['science', 'grid'])
         fig, ax = plt.subplots(figsize=(7, 5))
         divider = make_axes_locatable(ax)
         # Plot the window of interest
-        # ax.set_xlim(kwargs.get('xlim', (-0.5, 2.5)))
-        # ax.set_ylim(kwargs.get('ylim', (-0.5, 0.5)))
+        ax.set_xlim(kwargs.get('xlim', None))
+        ax.set_ylim(kwargs.get('ylim', None))
 
         lim = [np.min(self.vort), np.max(self.vort)]
         lim = kwargs.get('lims', lim)
@@ -114,8 +114,8 @@ class Plots(FlowBase):
         fig, ax = plt.subplots(figsize=(7, 5))
         divider = make_axes_locatable(ax)
         # Plot the window of interest
-        # ax.set_xlim(kwargs.get('xlim', (-0.5, 2.5)))
-        # ax.set_ylim(kwargs.get('ylim', (-0.5, 0.5)))
+        ax.set_xlim(kwargs.get('xlim', None))
+        ax.set_ylim(kwargs.get('ylim', None))
 
         lim = [np.min(self.vort), np.max(self.vort)]
         lim = kwargs.get('lims', lim)
@@ -154,7 +154,7 @@ class Plots(FlowBase):
     #     divider = make_axes_locatable(ax)
     #     # Plot the window of interest
     #     ax.set_xlim(kwargs.get('xlim', (-0.2, 2.3)))
-    #     ax.set_ylim(-0.5, 0.5)
+    #     ax.set_ylimNone
     #
     #     if kwargs.get('rec', False):
     #         rec = _rec(theta=12)

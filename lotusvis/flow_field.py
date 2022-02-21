@@ -18,12 +18,13 @@ class FlowBase:
     average and plot the contours and an animation.
     """
 
-    def __init__(self, sim_dir, fn_root, length_scale, **kwargs):
+    def __init__(self, sim_dir, fn_root, length_scale, ext='vti', **kwargs):
         self.sim_dir = sim_dir
         self.datp_dir = os.path.join(sim_dir, 'datp')
         self.length_scale = length_scale
 
-        fns = [fn for fn in os.listdir(self.datp_dir) if fn.startswith(fn_root) and fn.endswith('.pvti')]
+        print(f'Looking for .pv{ext} files')
+        fns = [fn for fn in os.listdir(self.datp_dir) if fn.startswith(fn_root) and fn.endswith(f'.p{ext}')]
         self.fns = Tcl().call('lsort', '-dict', fns)
 
         self.X, self.Y, self.U, self.V, self.p = None, None, None, None, None
@@ -31,30 +32,37 @@ class FlowBase:
 
         if len(fns) > 1:
             if t_avg:
-                props = self.time_avg()
+                props = self.time_avg(ext)
             else:
-                props = self.single_instance()
+                props = self.single_instance(ext)
         else:
-            assert (len(fns) > 0), f'You dont have {fn_root}.pvti in your {self.datp_dir} folder'
-            props = self.single_instance()
+            assert (len(fns) > 0), f'You dont have {fn_root}.p{ext} in your {self.datp_dir} folder'
+            props = self.single_instance(ext)
 
         self.assign_props(props)
 
     def assign_props(self, snap):
-        u, v, _ = snap[0:-1]
+        self.X, self.Y = snap[0:2]
+        u, v, _ = snap[2:-1]
         self.U, self.V = np.mean(u, axis=2), np.mean(v, axis=2)
         self.p = np.mean(snap[-1], axis=0)
         del u, v, snap
 
-    def single_instance(self):
-        snap = io.format_2d(os.path.join(self.datp_dir, self.fns[-1]), self.length_scale)
+    def single_instance(self, ext):
+        if ext == 'vti':
+            snap = io.vti_format_2d(os.path.join(self.datp_dir, self.fns[-1]), self.length_scale)
+        else:
+            snap = io.vtr_format_2d(os.path.join(self.datp_dir, self.fns[-1]), self.length_scale)
         snap = np.array(snap).T
         return snap
 
-    def time_avg(self):
+    def time_avg(self, ext):
         snaps = []
         for fn in self.fns:
-            snap = io.format_2d(os.path.join(self.datp_dir, fn), self.length_scale)
+            if ext == 'vti':
+                snap = io.vti_format_2d(os.path.join(self.datp_dir, self.fns[-1]), self.length_scale)
+            else:
+                snap = io.vtr_format_2d(os.path.join(self.datp_dir, self.fns[-1]), self.length_scale)
             snaps.append(snap)
         del snap
         # Time average the flow field snaps
@@ -121,14 +129,14 @@ class LoadVTR:
         del u, v, snap
 
     def single_instance(self):
-        snap = io.format_2d(os.path.join(self.datp_dir, self.fns[-1]), self.length_scale)
+        snap = io.vti_format_2d(os.path.join(self.datp_dir, self.fns[-1]), self.length_scale)
         snap = np.array(snap).T
         return snap
 
     def time_avg(self):
         snaps = []
         for fn in self.fns:
-            snap = io.format_2d(os.path.join(self.datp_dir, fn), self.length_scale)
+            snap = io.vti_format_2d(os.path.join(self.datp_dir, fn), self.length_scale)
             snaps.append(snap)
         del snap
         # Time average the flow field snaps
