@@ -59,13 +59,20 @@ def read_vti(file):
     # get scalar field
     sca = np.array(pointData.GetScalars('Pressure')).reshape(sh + (1,))
 
+    # Format values
+    U, V, W = np.transpose(np.array(vec), (0, 3, 2, 1))
+    p = np.transpose(sca, (0, 3, 2, 1))
+
+    print(np.shape(U), np.shape(p))
+
     # Generate grid
     # nPoints = dat.GetNumberOfPoints()
-    (xmin, xmax, ymin, ymax, zmin, zmax) = data.GetBounds()
+    xmin, xmax, ymin, ymax, zmin, zmax = data.GetBounds()
     # grid3D = np.mgrid[xmin:xmax + 1, ymin:ymax + 1, zmin:zmax + 1]
-    grid2D = np.mgrid[xmin:xmax + 1, ymin:ymax + 1]
+    gridx, gridy = np.linspace(xmin, xmax, np.shape(U[0])), np.linspace(ymin, ymax, np.shape(V[1]))
 
-    return np.transpose(np.array(vec), (0, 3, 2, 1)), np.transpose(sca, (0, 3, 2, 1)), grid2D
+
+    return (U, V, W), p, np.array(gridx, gridy)
 
 
 def vti_format_2d(fn, length_scale):
@@ -84,12 +91,9 @@ def vti_format_2d(fn, length_scale):
     data = read_vti(fn)
     # Get the grid
     X, Y = data[2]
-    print(np.shape(X))
 
     U, V, W = data[0]
-    print(np.shape(U))
     p = data[1]
-    print(np.shape(p))
     p = np.reshape(p, [np.shape(p)[0], np.shape(p)[2], np.shape(p)[3]])
     return X, Y, U, V, W, p
 
