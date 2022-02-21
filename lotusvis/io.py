@@ -40,6 +40,33 @@ def read_vtr(fn):
         print('\n' + fn + ' corrupt, skipping for now')
 
 
+def read_vti(file):
+    reader = vtk.vtkXMLPImageDataReader()
+    reader.SetFileName(file)
+    reader.Update()
+    data = reader.GetOutput()
+    pointData = data.GetPointData()
+
+    sh = data.GetDimensions()[::-1]
+    ndims = len(sh)
+
+    # get vector field
+    v = np.array(pointData.GetVectors("Velocity")).reshape(sh + (ndims,))
+    vec = []
+    for d in range(ndims):
+        a = v[..., d]
+        vec.append(a)
+    # get scalar field
+    sca = np.array(pointData.GetScalars('Pressure')).reshape(sh + (1,))
+
+    # Generate grid
+    # nPoints = dat.GetNumberOfPoints()
+    (xmin, xmax, ymin, ymax, zmin, zmax) = data.GetBounds()
+    grid3D = np.mgrid[xmin:xmax + 1, ymin:ymax + 1, zmin:zmax + 1]
+
+    return np.transpose(np.array(vec), (0, 3, 2, 1)), np.transpose(sca, (0, 3, 2, 1)), grid3D
+
+
 def format_2d(fn, length_scale, rotation=0):
     """
     Rotates and scales vtr file
@@ -57,7 +84,7 @@ def format_2d(fn, length_scale, rotation=0):
 
     """
     rot = rotation / 180 * np.pi
-    data = read_vtr(fn)
+    data = read_vti(fn)
     # Get the grid
     x, y, z = data[2]
     X, Y = np.meshgrid(x / length_scale, y / length_scale)
