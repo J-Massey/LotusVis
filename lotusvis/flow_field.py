@@ -25,7 +25,7 @@ class FlowBase:
         self.length_scale = length_scale
 
         self.fns = None
-        self.X, self.Y, self.Z, self.U, self.V, self.Z, self.p = None, None, None, None, None, None, None
+        self.X, self.Y, self.Z, self.U, self.V, self.W, self.p = None, None, None, None, None, None, None
         self.init_flow(ext, fn_root, kwargs)
 
     def init_flow(self, ext, fn_root, kwargs):
@@ -60,9 +60,9 @@ class FlowBase:
               f'assigning properties')
 
     def props(self, snap):
-        self.X, self.Y, self.z = snap[0:3]
+        self.X, self.Y, self.Z = snap[0:3]
         u, v, z = snap[3:-1]
-        self.U, self.V, self.Z = u, v, z
+        self.U, self.V, self.W = u, v, z
         self.p = snap[-1]
         del u, v, z, snap
 
