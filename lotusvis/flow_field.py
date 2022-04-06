@@ -94,8 +94,8 @@ class FlowBase:
             snaps[idx] = snap
         del snap
         # Time average the flow field snaps
-        mean_t = np.mean(np.array(snaps).T, axis=1)
-        return mean_t
+        t_mean = np.mean(snaps, axis=0)
+        return t_mean
 
     def rms(self):
         means = np.mean(np.array(self.snaps).T, axis=1)[2:-1]

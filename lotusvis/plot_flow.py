@@ -24,7 +24,7 @@ def _rec(theta):
 
 class Plots(FlowBase):
     def __init__(self, sim_dir, fn_root, length_scale, cmap=None):
-        super().__init__(sim_dir, fn_root, length_scale)
+        super().__init__(sim_dir, fn_root, length_scale, span_avg=True)
         self.cmap = cmap
         self.mag = np.sqrt(self.V ** 2 + self.U ** 2)
 
