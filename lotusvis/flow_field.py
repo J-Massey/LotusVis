@@ -85,13 +85,13 @@ class FlowBase:
         return snap
 
     def time_avg(self, ext):
-        snaps = np.zeros(len(self.fns))
+        snaps = np.array([])
         for idx, fn in enumerate(self.fns):
             if ext == 'vti':
                 snap = io.vti_format(os.path.join(self.datp_dir, fn), self.length_scale)
             else:
                 snap = io.vtr_format_2d(os.path.join(self.datp_dir, self.fns[-1]), self.length_scale)
-            snaps[idx] = snap
+            snaps = np.append(snaps, snap)
         del snap
         # Time average the flow field snaps
         t_mean = np.mean(snaps, axis=0)
