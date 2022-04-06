@@ -63,10 +63,10 @@ class FlowBase:
 
     def props(self, snap):
         self.X, self.Y, self.Z = snap[0:3]
-        u, v, z = snap[3:-1]
-        self.U, self.V, self.W = u, v, z
+        u, v, w = snap[3:-1]
+        self.U, self.V, self.W = u, v, w
         self.p = snap[-1]
-        del u, v, z, snap
+        del u, v, w, snap
 
     def spav_props(self, snap):
         self.X, self.Y, _ = snap[0:3]
@@ -95,13 +95,6 @@ class FlowBase:
         # Time average the flow field snaps
         mean_t = np.mean(np.array(snaps).T, axis=1)
         return mean_t
-
-    def span_avg(self, snap):
-        self.X, self.Y, self.Z = snap[0:2]
-        u, v, z = snap[2:-1]
-        self.U, self.V, self.Z = u, v, z
-        self.p = np.mean(snap[-1], axis=0)
-        del u, v, z, snap
 
     def rms(self):
         means = np.mean(np.array(self.snaps).T, axis=1)[2:-1]
