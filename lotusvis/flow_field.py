@@ -20,58 +20,62 @@ class FlowBase:
     """
 
     def __init__(self, sim_dir, fn_root, length_scale, ext='vti', **kwargs):
-        time_start = time.process_time()
         self.sim_dir = sim_dir
         self.datp_dir = os.path.join(sim_dir, 'datp')
         self.length_scale = length_scale
 
-        print(f'Looking for .p{ext} files')
-        time_read = time.process_time()
-        fns = [fn for fn in os.listdir(self.datp_dir) if fn.startswith(fn_root) and fn.endswith(f'.p{ext}')]
-        self.fns = Tcl().call('lsort', '-dict', fns)
-        print(f'Found {len(self.fns)} instances in {time.process_time()-time_read:.3f}s, now extracting data and '
-              f'assigning properties')
-
+        self.fns = None
         self.X, self.Y, self.Z, self.U, self.V, self.Z, self.p = None, None, None, None, None, None, None
+        self.init_flow(ext, fn_root, kwargs)
+
+    def init_flow(self, ext, fn_root, kwargs):
+        self.get_fns(ext, fn_root)
+
         t_avg = kwargs.get('t_avg', False)
         span_avg = kwargs.get('span_avg', False)
-
         time_prop = time.process_time()
+        props = self.get_props(ext, fn_root, t_avg)
+        if span_avg:
+            self.spav_props(props)
+        else:
+            self.props(props)
+        print(f"Extracted data, and assigned properties in {time.process_time() - time_prop:.3f}s")
 
-        if len(fns) > 1:
+    def get_props(self, ext, fn_root, t_avg):
+        if len(self.fns) > 1:
             if t_avg:
                 props = self.time_avg(ext)
             else:
                 props = self.single_instance(ext)
         else:
-            assert (len(fns) > 0), f"You don't have {fn_root}.p{ext} in your {self.datp_dir} folder"
+            assert (len(self.fns) > 0), f"You don't have {fn_root}.p{ext} in your {self.datp_dir} folder"
             props = self.single_instance(ext)
+        return props
 
-        if span_avg:
-            self.assign_spav(props)
-        else:
-            self.assign_props(props)
+    def get_fns(self, ext, fn_root):
+        time_read = time.process_time()
+        fns = [fn for fn in os.listdir(self.datp_dir) if fn.startswith(fn_root) and fn.endswith(f'.p{ext}')]
+        self.fns = Tcl().call('lsort', '-dict', fns)
+        print(f'Found {len(self.fns)} instances in {time.process_time() - time_read:.3f}s, now extracting data and '
+              f'assigning properties')
 
-        print(f"Extracted data, and assigned properties in {time.process_time()-time_prop:.3f}s")
-        print(f"Finished finding and extracting .p{ext} files in {time.process_time()-time_start:.3f}s")
-
-    def assign_props(self, snap):
-        self.X, self.Y = snap[0:2]
-        u, v, z = snap[2:-1]
+    def props(self, snap):
+        self.X, self.Y, self.z = snap[0:3]
+        u, v, z = snap[3:-1]
         self.U, self.V, self.Z = u, v, z
         self.p = snap[-1]
         del u, v, z, snap
 
-    def assign_spav(self, snap):
-        self.X, self.Y = snap[0:2]
-        u, v, _ = snap[2:-1]
+    def spav_props(self, snap):
+        self.X, self.Y, _ = snap[0:3]
+        u, v, _ = snap[3:-1]
         self.U, self.V = np.mean(u, axis=2), np.mean(v, axis=2)
         self.p = np.mean(snap[-1], axis=0)
         del u, v, snap
 
     def single_instance(self, ext):
         if ext == 'vti':
-            snap = io.vti_format_2d(os.path.join(self.datp_dir, self.fns[-1]), self.length_scale)
+            snap = io.vti_format(os.path.join(self.datp_dir, self.fns[-1]), self.length_scale)
         else:
             snap = io.vtr_format_2d(os.path.join(self.datp_dir, self.fns[-1]), self.length_scale)
         snap = np.array(snap).T
@@ -81,7 +85,7 @@ class FlowBase:
         snaps = np.zeros(len(self.fns))
         for idx, fn in enumerate(self.fns):
             if ext == 'vti':
-                snap = io.vti_format_2d(os.path.join(self.datp_dir, fn), self.length_scale)
+                snap = io.vti_format(os.path.join(self.datp_dir, fn), self.length_scale)
             else:
                 snap = io.vtr_format_2d(os.path.join(self.datp_dir, self.fns[-1]), self.length_scale)
             snaps[idx] = snap

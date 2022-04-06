@@ -65,16 +65,25 @@ def read_vti(file):
     p = np.transpose(sca, (0, 3, 2, 1))
     p = np.reshape(p, [np.shape(p)[0], np.shape(p)[2], np.shape(p)[3]])
 
+    grid = generate_grid(np.shape(U), data)
+
+    return (U, V, W), p, grid
+
+
+def generate_grid(shape, data):
     # Generate grid
     # nPoints = dat.GetNumberOfPoints()
     xmin, xmax, ymin, ymax, zmin, zmax = data.GetBounds()
     # grid3D = np.mgrid[xmin:xmax + 1, ymin:ymax + 1, zmin:zmax + 1]
-    gridx, gridy = np.linspace(xmin, xmax, np.shape(U)[0]), np.linspace(ymin, ymax, np.shape(U)[1])
+    gridx = np.linspace(xmin, xmax, shape[0])
+    gridy = np.linspace(ymin, ymax, shape[1])
+    gridz = np.linspace(zmin, zmax, shape[2])
+    grid = np.array((gridx, gridy, gridz))
+    return grid
 
-    return (U, V, W), p, np.array((gridx, gridy))
 
 # TODO: Get rid of the format crap
-def vti_format_2d(fn, length_scale):
+def vti_format(fn, length_scale):
     """
     Rotates and scales vti file
     Args:
@@ -89,11 +98,11 @@ def vti_format_2d(fn, length_scale):
     """
     data = read_vti(fn)
     # Get the grid
-    x, y = data[2]
-    X, Y = np.meshgrid(x / length_scale, y / length_scale)
+    x, y, z = data[2]
+    X, Y, Z = np.meshgrid(x / length_scale, y / length_scale, z/length_scale)
     U, V, W = data[0]
     p = data[1]
-    return X, Y, U, V, W, p
+    return X, Y, Z, U, V, W, p
 
 
 def vtr_format_2d(fn, length_scale, rotation=0):
