@@ -56,7 +56,7 @@ class FlowBase:
         print(f"Finished finding and extracting .p{ext} files in {time.process_time()-time_start:.3f}s")
 
     def assign_props(self, snap):
-        self.X, self.Y, self.Z = snap[0:2]
+        self.X, self.Y = snap[0:2]
         u, v, z = snap[2:-1]
         self.U, self.V, self.Z = u, v, z
         self.p = snap[-1]
