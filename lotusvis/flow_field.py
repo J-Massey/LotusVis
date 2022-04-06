@@ -88,6 +88,7 @@ class FlowBase:
         snaps = np.array([])
         for idx, fn in enumerate(self.fns):
             if ext == 'vti':
+                print(fn)
                 snap = io.vti_format(os.path.join(self.datp_dir, fn), self.length_scale)
             else:
                 snap = io.vtr_format_2d(os.path.join(self.datp_dir, self.fns[-1]), self.length_scale)
