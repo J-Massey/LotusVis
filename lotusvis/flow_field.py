@@ -95,7 +95,7 @@ class FlowBase:
             snaps = np.append(snaps, snap)
         del snap
         # Time average the flow field snaps
-        print(np.shape(snaps))
+        print(np.shape(snaps.T))
         t_mean = np.mean(snaps, axis=0)
         return t_mean
 
