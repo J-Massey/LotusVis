@@ -8,9 +8,11 @@
 # Imports
 import os
 import time
-import numpy as np
-import lotusvis.io as io
 from tkinter import Tcl
+
+import numpy as np
+
+import lotusvis.io as io
 
 
 class FlowBase:

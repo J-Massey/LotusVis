@@ -4,9 +4,10 @@
 @description: This script helps in reading and formatting data from outside the module
 @contact: jmom1n15@soton.ac.uk
 """
+import warnings
+
 import numpy as np
 import vtk
-import warnings
 
 
 def read_vtr(fn):
@@ -99,7 +100,7 @@ def vti_format(fn, length_scale):
     data = read_vti(fn)
     # Get the grid
     x, y, z = data[2]
-    X, Y, Z = np.meshgrid(x / length_scale, y / length_scale, z/length_scale)
+    X, Y, Z = np.meshgrid(x / length_scale, y / length_scale, z / length_scale)
     U, V, W = data[0]
     p = data[1]
     return X, Y, Z, U, V, W, p
