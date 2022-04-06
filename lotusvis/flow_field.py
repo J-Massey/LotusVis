@@ -70,6 +70,7 @@ class FlowBase:
 
     def spav_props(self, snap):
         self.X, self.Y, _ = snap[0:3]
+        self.X, self.Y = np.mean(self.X, axis=2), np.mean(self.Y, axis=2)
         u, v, _ = snap[3:-1]
         self.U, self.V = np.mean(u, axis=2), np.mean(v, axis=2)
         self.p = np.mean(snap[-1], axis=0)
