@@ -29,11 +29,12 @@ class FlowBase:
         time_read = time.process_time()
         fns = [fn for fn in os.listdir(self.datp_dir) if fn.startswith(fn_root) and fn.endswith(f'.p{ext}')]
         self.fns = Tcl().call('lsort', '-dict', fns)
-        print(f'Found {len(self.fns)} instances in {time.process_time()-time_read}s, now extracting data and '
+        print(f'Found {len(self.fns)} instances in {time.process_time()-time_read:.3f}s, now extracting data and '
               f'assigning properties')
 
-        self.X, self.Y, self.U, self.V, self.p = None, None, None, None, None
+        self.X, self.Y, self.Z, self.U, self.V, self.Z, self.p = None, None, None, None, None, None, None
         t_avg = kwargs.get('t_avg', False)
+        span_avg = kwargs.get('span_avg', False)
 
         time_prop = time.process_time()
 
@@ -46,14 +47,25 @@ class FlowBase:
             assert (len(fns) > 0), f"You don't have {fn_root}.p{ext} in your {self.datp_dir} folder"
             props = self.single_instance(ext)
 
-        self.assign_props(props)
-        print(f"Extracted data, and assigned properties in {time.process_time()-time_prop}s")
-        print(f"Finished finding and extracting .p{ext} files in {time.process_time()-time_start}s")
+        if span_avg:
+            self.assign_spav(props)
+        else:
+            self.assign_props(props)
+
+        print(f"Extracted data, and assigned properties in {time.process_time()-time_prop:.3f}s")
+        print(f"Finished finding and extracting .p{ext} files in {time.process_time()-time_start:.3f}s")
 
     def assign_props(self, snap):
+        self.X, self.Y, self.Z = snap[0:2]
+        u, v, z = snap[2:-1]
+        self.U, self.V, self.Z = u, v, z
+        self.p = snap[-1]
+        del u, v, z, snap
+
+    def assign_spav(self, snap):
         self.X, self.Y = snap[0:2]
         u, v, _ = snap[2:-1]
-        self.U, self.V = np.mean(u, axis=2), np.mean(v, axis=2)  # TODO: Add the option to slice instead of time average
+        self.U, self.V = np.mean(u, axis=2), np.mean(v, axis=2)
         self.p = np.mean(snap[-1], axis=0)
         del u, v, snap
 
@@ -77,6 +89,13 @@ class FlowBase:
         # Time average the flow field snaps
         mean_t = np.mean(np.array(snaps).T, axis=1)
         return mean_t
+
+    def span_avg(self, snap):
+        self.X, self.Y, self.Z = snap[0:2]
+        u, v, z = snap[2:-1]
+        self.U, self.V, self.Z = u, v, z
+        self.p = np.mean(snap[-1], axis=0)
+        del u, v, z, snap
 
     def rms(self):
         means = np.mean(np.array(self.snaps).T, axis=1)[2:-1]
