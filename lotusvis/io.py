@@ -62,13 +62,13 @@ def read_vti(file):
     sca = np.array(pointData.GetScalars('Pressure')).reshape(sh + (1,))
 
     # Format values
-    U, V, W = np.array(vec)
-    # p = np.transpose(sca, (0, 3, 2, 1))
-    # p = np.reshape(p, [np.shape(p)[0], np.shape(p)[2], np.shape(p)[3]])
+    U, V, W = np.transpose(np.array(vec), (0, 3, 2, 1))
+    p = np.transpose(sca, (0, 3, 2, 1))
+    p = np.reshape(p, [np.shape(p)[0], np.shape(p)[2], np.shape(p)[3]])
 
     grid = generate_grid(np.shape(U), data)
 
-    return v, sca, grid
+    return (U, V, W), p, grid
 
 
 def generate_grid(shape, data):

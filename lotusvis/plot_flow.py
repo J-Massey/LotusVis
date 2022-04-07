@@ -7,7 +7,6 @@
 
 import matplotlib.colors as colors
 import matplotlib.patches as patches
-# Imports
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
