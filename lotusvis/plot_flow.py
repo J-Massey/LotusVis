@@ -57,7 +57,7 @@ class Plots(FlowBase):
         else:
             _cmap = self.cmap
 
-        cs = ax.contourf(self.X, self.Y, np.transpose(self.mag),
+        cs = ax.contourf(self.X, self.Y, self.mag,
                          levels=levels, vmin=lim[0], vmax=lim[1],
                          norm=norm, cmap=_cmap, extend='both')
         ax_cb = divider.new_horizontal(size="5%", pad=0.05)
@@ -96,7 +96,7 @@ class Plots(FlowBase):
         else:
             _cmap = self.cmap
 
-        cs = ax.contourf(self.X, self.Y, np.transpose(self.vort),
+        cs = ax.contourf(self.X, self.Y, self.vort,
                          levels=levels, vmin=lim[0], vmax=lim[1],
                          norm=norm, cmap=_cmap, extend='both')
         ax_cb = divider.new_horizontal(size="5%", pad=0.05)
@@ -135,7 +135,7 @@ class Plots(FlowBase):
         else:
             _cmap = self.cmap
 
-        cs = ax.contourf(self.X, self.Y, np.transpose(self.p),
+        cs = ax.contourf(self.X, self.Y, self.p,
                          levels=levels, vmin=lim[0], vmax=lim[1],
                          norm=norm, cmap=_cmap, extend='both')
         ax_cb = divider.new_horizontal(size="5%", pad=0.05)
@@ -173,7 +173,7 @@ class Plots(FlowBase):
     #     else:
     #         lvls = np.linspace(lim[0], lim[1], levels)
     #
-    #     cs = ax.contour(self.X, self.Y, np.transpose(self.vals),
+    #     cs = ax.contour(self.X, self.Y, (self.vals),
     #                     levels=levels, vmin=lim[0], vmax=lim[1],
     #                     norm=norm, colors=kwargs.get('colors', sns.color_palette("tab10")))
     #     ax.clabel(cs, cs.levels[2::2], inline_spacing=1, inline=1, fontsize=12, fmt='%1.2f')
@@ -193,7 +193,7 @@ class Plots(FlowBase):
     #     ax.set_ylabel(r'$y/c$')
     #
     #     ax.plot(self.X, self.Y, c='k', linewidth=0.2)
-    #     ax.plot(np.transpose(self.X), np.transpose(self.Y), c='k', linewidth=0.2)
+    #     ax.plot((self.X), (self.Y), c='k', linewidth=0.2)
     #
     #     rec = _rec(theta=0)
     #     ax.add_patch(rec)

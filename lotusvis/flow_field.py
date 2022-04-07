@@ -78,9 +78,9 @@ class FlowBase:
 
     def single_instance(self, ext):
         if ext == 'vti':
-            snap = io.vti_format(os.path.join(self.datp_dir, self.fns[-1]), self.length_scale)
+            snap = io.read_vti(os.path.join(self.datp_dir, self.fns[-1]), self.length_scale)
         else:
-            snap = io.vtr_format_2d(os.path.join(self.datp_dir, self.fns[-1]), self.length_scale)
+            snap = io.read_vti(os.path.join(self.datp_dir, self.fns[-1]), self.length_scale)
         snap = np.array(snap).T
         return snap
 

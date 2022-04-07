@@ -41,69 +41,35 @@ def read_vtr(fn):
         print('\n' + fn + ' corrupt, skipping for now')
 
 
-def read_vti(file):
+def read_vti(file, length_scale):
     warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
     reader = vtk.vtkXMLPImageDataReader()
     reader.SetFileName(file)
     reader.Update()
     data = reader.GetOutput()
-    pointData = data.GetPointData()
+    point_data = data.GetPointData()
 
     sh = data.GetDimensions()[::-1]
-    ndims = len(sh)
 
-    # get vector field
-    v = np.array(pointData.GetVectors("Velocity")).reshape(sh + (ndims,))
-    vec = []
-    for d in range(ndims):
-        a = v[..., d]
-        vec.append(a)
-    # get scalar field
-    sca = np.array(pointData.GetScalars('Pressure')).reshape(sh + (1,))
+    velocity = np.array(point_data.GetVectors("Velocity")).reshape(sh + (len(sh),))
+    u, v, w = np.einsum('ijkl -> ljki', velocity)
 
-    # Format values
-    U, V, W = np.transpose(np.array(vec), (0, 3, 2, 1))
-    p = np.transpose(sca, (0, 3, 2, 1))
-    p = np.reshape(p, [np.shape(p)[0], np.shape(p)[2], np.shape(p)[3]])
+    p = np.array(point_data.GetScalars('Pressure')).reshape(sh)
+    p = np.einsum('ijk -> jki', p)
 
-    grid = generate_grid(np.shape(U), data)
+    x, y, z = generate_grid(data, length_scale)
 
-    return (U, V, W), p, grid
+    return x, y, z, u, v, w, p
 
 
-def generate_grid(shape, data):
-    # Generate grid
-    # nPoints = dat.GetNumberOfPoints()
+def generate_grid(data, length_scale):
     xmin, xmax, ymin, ymax, zmin, zmax = data.GetBounds()
-    # grid3D = np.mgrid[xmin:xmax + 1, ymin:ymax + 1, zmin:zmax + 1]
-    gridx = np.linspace(xmin, xmax, shape[0])
-    gridy = np.linspace(ymin, ymax, shape[1])
-    gridz = np.linspace(zmin, zmax, shape[2])
-    grid = np.array((gridx, gridy, gridz))
-    return grid
-
-
-# TODO: Get rid of the format crap
-def vti_format(fn, length_scale):
-    """
-    Rotates and scales vti file
-    Args:
-        fn: The path to the 'datp' folder
-        length_scale: length scale of the simulation
-
-    Returns: X, Y - coordinates (useful for indexing)
-             U, V - rotated velocity components
-             w    - un-rotated z velocity component
-             p    - pressure field
-
-    """
-    data = read_vti(fn)
-    # Get the grid
-    x, y, z = data[2]
-    X, Y, Z = np.meshgrid(x / length_scale, y / length_scale, z / length_scale)
-    U, V, W = data[0]
-    p = data[1]
-    return X, Y, Z, U, V, W, p
+    shape = data.GetDimensions()
+    grid_x = np.linspace(xmin, xmax, shape[0])
+    grid_y = np.linspace(ymin, ymax, shape[1])
+    grid_z = np.linspace(zmin, zmax, shape[2])
+    x, y, z = np.meshgrid(grid_x / length_scale, grid_y / length_scale, grid_z / length_scale, indexing='xy')
+    return x, y, z
 
 
 def vtr_format_2d(fn, length_scale, rotation=0):
