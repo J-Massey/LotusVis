@@ -81,7 +81,7 @@ class FlowBase:
             snap = io.read_vti(os.path.join(self.datp_dir, self.fns[-1]), self.length_scale)
         else:
             snap = io.read_vti(os.path.join(self.datp_dir, self.fns[-1]), self.length_scale)
-        snap = np.array(snap).T
+        # snap = np.array(snap).T
         return snap
 
     # TODO: There's some array mismatch bug in time_avg
