@@ -84,6 +84,7 @@ class FlowBase:
         snap = np.array(snap).T
         return snap
 
+    # TODO: There's some array mismatch bug in time_avg
     def time_avg(self, ext):
         snaps = np.array([])
         for idx, fn in enumerate(self.fns):
