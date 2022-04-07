@@ -68,7 +68,7 @@ def read_vti(file):
 
     grid = generate_grid(np.shape(U), data)
 
-    return (U, V, W), sca, grid
+    return v, sca, grid
 
 
 def generate_grid(shape, data):
