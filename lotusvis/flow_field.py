@@ -17,16 +17,18 @@ import lotusvis.io as io
 
 class FlowBase:
     """
-    Class that holds all the functions to extract dat from a paraview fn,
+    Class that holds all the functions to extract datp from a paraview fn,
     average and plot the contours and an animation.
     """
-
     def __init__(self, sim_dir, fn_root, length_scale, ext='vti', **kwargs):
         self.sim_dir = sim_dir
         self.datp_dir = os.path.join(sim_dir, 'datp')
         self.length_scale = length_scale
+        self.ext = ext
 
         self.fns = None
+        self.snaps = None
+        self.straight_snaps()
         self.X, self.Y, self.Z, self.U, self.V, self.W, self.p = None, None, None, None, None, None, None
         self.init_flow(ext, fn_root, kwargs)
 
@@ -61,6 +63,16 @@ class FlowBase:
         print(f'Found {len(self.fns)} instances in {time.process_time() - time_read:.3f}s, now extracting data and '
               f'assigning properties')
 
+    def straight_snaps(self):
+        self.snaps = np.empty(len(self.fns))
+        for idx, fn in enumerate(self.fns):
+            # TODO: Make the vti vtr distinction
+            snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale)
+
+            self.snaps[idx] = snap
+        del snap
+
+
     def props(self, snap):
         self.X, self.Y, self.Z = snap[0:3]
         u, v, w = snap[3:-1]
@@ -90,7 +102,7 @@ class FlowBase:
         for idx, fn in enumerate(self.fns):
             if ext == 'vti':
                 print(fn)
-                snap = io.vti_format(os.path.join(self.datp_dir, fn), self.length_scale)
+                snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale)
             else:
                 snap = io.vtr_format_2d(os.path.join(self.datp_dir, self.fns[-1]), self.length_scale)
             snaps = np.append(snaps, snap)
@@ -120,4 +132,5 @@ class FlowBase:
 
         return np.mean(np.mean(fluc, axis=0), axis=2)
 
-# TODO: add in POD modes
+# TODO: add in POD modes using Mauliks PyParSVD
+# TODO: add in phase average
