@@ -64,7 +64,7 @@ class FlowBase:
               f'assigning properties')
 
     def straight_snaps(self):
-        self.snaps = np.empty(len(self.fns))
+        self.snaps = np.zeros(len(self.fns))
         for idx, fn in enumerate(self.fns):
             # TODO: Make the vti vtr distinction
             snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale)
