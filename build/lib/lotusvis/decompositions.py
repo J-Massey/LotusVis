@@ -14,10 +14,6 @@ from tqdm import tqdm
 
 
 class Decompositions(ReadIn):
-    @property
-    def snaps(self):
-        return self._snaps
-
     def __init__(self, sim_dir, fn_root, length_scale, ext='vti', **kwargs):
         super().__init__(sim_dir, fn_root, length_scale, ext)
 
@@ -32,7 +28,7 @@ class Decompositions(ReadIn):
         n_phase_snaps = len(self.fns) // t
         # Get the shape to initialise the array (important for efficiency)
         phase_average = np.zeros(self.init_phase_average_array(t))
-        for idx, fn in tqdm(enumerate(self.fns)):
+        for idx, fn in tqdm(enumerate(self.fns), total=len(self.fns)):
             # TODO: Make the vti vtr distinction
             snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale)
             # Start with zeros and build up the cumulative sum
@@ -62,6 +58,3 @@ class Decompositions(ReadIn):
         t_mean = np.mean(snaps, axis=0)
         return t_mean
 
-    @snaps.setter
-    def snaps(self, value):
-        self._snaps = value
