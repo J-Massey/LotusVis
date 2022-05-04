@@ -14,6 +14,10 @@ from tqdm import tqdm
 
 
 class Decompositions(ReadIn):
+    @property
+    def snaps(self):
+        return self._snaps
+
     def __init__(self, sim_dir, fn_root, length_scale, ext='vti', **kwargs):
         super().__init__(sim_dir, fn_root, length_scale, ext)
 

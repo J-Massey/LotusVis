@@ -15,9 +15,10 @@ from tqdm import tqdm
 import lotusvis.io as io
 
 
-class ReadIn:
+class FlowBase:
     """
-    Class that holds all the functions to extract datp from a paraview fn.
+    Class that holds all the functions to extract datp from a paraview fn,
+    average and plot the contours and an animation.
     """
     def __init__(self, sim_dir, fn_root, length_scale, ext='vti', **kwargs):
         self.fn_root = fn_root
@@ -26,7 +27,8 @@ class ReadIn:
         self.length_scale = length_scale
         self.ext = ext
 
-
+        self.X, self.Y, self.Z, self.U, self.V, self.W, self.p = None, None, None, None, None, None, None
+        self.init_flow(ext, fn_root, kwargs)
 
     @property
     def fns(self):
@@ -40,19 +42,13 @@ class ReadIn:
     @property
     def snaps(self):
         # This is only possible when working with small datasets or on iridis
-        # because of the memory it takes
-        snaps = np.empty(self.init_snap_array())
+        snaps = np.array([])
         for idx, fn in tqdm(enumerate(self.fns)):
             # TODO: Make the vti vtr distinction
             snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale)
-            snaps[idx] = snap
-            del snap
+            snaps = np.append(snaps, snap)
+        del snap  # Saves memory when working with big snaps
         return snaps
-
-    def init_snap_array(self):
-        n_snaps = len(self.fns)
-        snapshot_shape = np.shape(io.read_vti(os.path.join(self.datp_dir, self.fns[0]), self.length_scale))
-        return (n_snaps,) + snapshot_shape
 
     def init_flow(self, ext, fn_root, kwargs):
         t_avg = kwargs.get('t_avg', False)
@@ -75,6 +71,7 @@ class ReadIn:
             assert (len(self.fns) > 0), f"You don't have {fn_root}.p{ext} in your {self.datp_dir} folder"
             props = self.single_instance(ext)
         return props
+
 
     def props(self, snap):
         self.X, self.Y, self.Z = snap[0:3]
