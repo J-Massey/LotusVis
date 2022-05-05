@@ -35,7 +35,7 @@ class Decompositions(ReadIn):
         self.phase_average = np.zeros(self.init_phase_average_array(t))
 
         time_start = time.time()
-        with concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()//2) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()-2) as executor:
             executor.map(lambda idxfn:
                          self.helper_phase_average(idxfn[0], idxfn[1], n_phase_snaps),
                          enumerate(self.fns))
