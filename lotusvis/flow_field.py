@@ -5,7 +5,6 @@
 @contact: jmom1n15@soton.ac.uk
 """
 
-# Imports
 import os
 import time
 from tkinter import Tcl
@@ -31,6 +30,10 @@ class ReadIn:
         fns = [fn for fn in os.listdir(self.datp_dir) if fn.startswith(self.fn_root) and fn.endswith(f'.p{self.ext}')]
         fns = Tcl().call('lsort', '-dict', fns)
         return fns
+
+    @fns.setter
+    def fns(self, value):
+        self.fns = value
 
     @property
     def snaps(self):
