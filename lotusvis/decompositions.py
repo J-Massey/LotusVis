@@ -43,6 +43,8 @@ class Decompositions(ReadIn):
         print(f"Extracted phase average in {time.time() - time_start:.3f}s,"
               f"using {os.cpu_count()} threads")
 
+        self.phase_average = self.phase_average/t
+
         return self.phase_average
 
     def helper_phase_average(self, idx, fn, n_phase_snaps):
