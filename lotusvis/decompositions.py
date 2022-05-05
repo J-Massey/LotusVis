@@ -6,7 +6,6 @@
 @contact: jmom1n15@soton.ac.uk
 """
 import concurrent.futures
-import multiprocessing
 import os
 import time
 
@@ -36,13 +35,13 @@ class Decompositions(ReadIn):
         self.phase_average = np.zeros(self.init_phase_average_array(t))
 
         time_start = time.time()
-        with concurrent.futures.ThreadPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=os.cpu_count()//2) as executor:
             executor.map(lambda idxfn:
                          self.helper_phase_average(idxfn[0], idxfn[1], n_phase_snaps),
                          enumerate(self.fns))
 
         print(f"Extracted phase average in {time.time() - time_start:.3f}s,"
-              f"using {multiprocessing.cpu_count()} threads")
+              f"using {os.cpu_count()} threads")
 
         return self.phase_average
 
@@ -54,7 +53,7 @@ class Decompositions(ReadIn):
         :param n_phase_snaps:
         :return:
         """
-        snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale) # TODO: Make the vti vtr distinction
+        snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale)  # TODO: Make the vti vtr distinction
         self.phase_average[int(idx % n_phase_snaps)] = self.phase_average[int(idx % n_phase_snaps)] + snap
 
     def init_phase_average_array(self, t):
