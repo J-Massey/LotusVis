@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='LotusFlowVis',
-    version='1.0',
+    version='2.1.2',
     packages=['lotusvis'],
     url='https://github.com/J-Massey/LotusVis.git',
     license='MIT',
