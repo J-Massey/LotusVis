@@ -5,16 +5,13 @@
               Eventually I hope to integrate this with some DMD and POD decompositions.
 @contact: jmom1n15@soton.ac.uk
 """
-import concurrent.futures
 import os
-import time
 
 import numpy as np
 
 import lotusvis.io as io
 from lotusvis.flow_field import ReadIn
 from tqdm import tqdm
-import threading
 
 
 class Decompositions(ReadIn):

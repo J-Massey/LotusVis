@@ -10,8 +10,6 @@ from lotusvis.flow_field import ReadIn
 
 
 class Calculations(ReadIn):
-    def __init__(self, sim_dir, fn_root, length_scale, ext='vti', **kwargs):
-        super().__init__(sim_dir, fn_root, length_scale, ext, kwargs)
 
     @property
     def magnitude(self):
