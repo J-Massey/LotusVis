@@ -72,33 +72,33 @@ def generate_grid(data, length_scale):
     return x, y, z
 
 
-def vtr_format_2d(fn, length_scale, rotation=0):
-    """
-    Rotates and scales vtr file
-    Args:
-        fn: The path to the 'datp' folder
-        length_scale: length scale of the simulation
-        rotation: Rotate the grid. If you're running a simulation with
-                  an angle of attack, it's better to rotate the flow than
-                  the foil because of the meshing.
+# def vtr_format_2d(fn, length_scale, rotation=0):
+#     """
+#     Rotates and scales vtr file
+#     Args:
+#         fn: The path to the 'datp' folder
+#         length_scale: length scale of the simulation
+#         rotation: Rotate the grid. If you're running a simulation with
+#                   an angle of attack, it's better to rotate the flow than
+#                   the foil because of the meshing.
 
-    Returns: X, Y - coordinates (useful for indexing)
-             U, V - rotated velocity components
-             w    - un-rotated z velocity component
-             p    - pressure field
+#     Returns: X, Y - coordinates (useful for indexing)
+#              U, V - rotated velocity components
+#              w    - un-rotated z velocity component
+#              p    - pressure field
 
-    """
-    rot = rotation / 180 * np.pi
-    data = read_vtr(fn)
-    # Get the grid
-    x, y, z = data[2]
-    X, Y = np.meshgrid(x / length_scale, y / length_scale)
-    X = np.cos(rot) * X + np.sin(rot) * Y
-    Y = -np.sin(rot) * X + np.cos(rot) * Y
+#     """
+#     rot = rotation / 180 * np.pi
+#     data = read_vtr(fn)
+#     # Get the grid
+#     x, y, z = data[2]
+#     X, Y = np.meshgrid(x / length_scale, y / length_scale)
+#     X = np.cos(rot) * X + np.sin(rot) * Y
+#     Y = -np.sin(rot) * X + np.cos(rot) * Y
 
-    u, v, w = data[0]
-    U = np.cos(rot) * u + np.sin(rot) * v
-    V = -np.sin(rot) * u + np.cos(rot) * v
-    p = data[1]
-    p = np.reshape(p, [np.shape(p)[0], np.shape(p)[2], np.shape(p)[3]])
-    return X, Y, U, V, w, p
+#     u, v, w = data[0]
+#     U = np.cos(rot) * u + np.sin(rot) * v
+#     V = -np.sin(rot) * u + np.cos(rot) * v
+#     p = data[1]
+#     p = np.reshape(p, [np.shape(p)[0], np.shape(p)[2], np.shape(p)[3]])
+#     return X, Y, U, V, w, p

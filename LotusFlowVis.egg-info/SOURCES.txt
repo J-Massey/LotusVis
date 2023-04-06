@@ -12,3 +12,4 @@ lotusvis/flow_field.py
 lotusvis/io.py
 lotusvis/plot_flow.py
 lotusvis/plot_vtr.py
+lotusvis/save.py

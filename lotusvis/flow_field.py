@@ -5,6 +5,7 @@
 @contact: jmom1n15@soton.ac.uk
 """
 
+from genericpath import exists
 import os
 import time
 from tkinter import Tcl
@@ -36,16 +37,35 @@ class ReadIn:
         self.fns = value
 
     @property
-    def snaps(self):
-        # This is only possible when working with small datasets or on iridis
-        # because of the memory it takes
-        snaps = np.empty(self.init_snap_array())
-        for idx, fn in tqdm(enumerate(self.fns)):
-            # TODO: Make the vti vtr distinction
-            snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale)
-            snaps[idx] = snap
-            del snap
-        return snaps
+    def snaps(self, save=True):
+        """
+        This function reads in the data from the paraview files saves as an binary, and
+        returns a numpy array of the data.
+        :param save: If true, the data will be saved as a binary file.
+        :return: A numpy array of the data.
+        """
+        try:
+            if exists(os.path.join(self.datp_dir, f'{self.fn_root}.npy')):
+                snaps = np.load(os.path.join(self.datp_dir, f'{self.fn_root}.npy'))
+            else:
+                snaps = np.empty(self.init_snap_array())
+                for idx, fn in tqdm(enumerate(self.fns)):
+                    snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale)
+                    snaps[idx] = snap
+                    del snap
+                if save:
+                    np.save(os.path.join(self.datp_dir, f'{self.fn_root}.npy'), snaps)
+            return snaps
+        except MemoryError:
+            print('Not enough memory to load all the data, at once saving individual time steps as binary and trying again')
+            try:
+                for idx, fn in tqdm(enumerate(self.fns)):
+                    snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale)
+                    np.save(os.path.join(self.datp_dir, f'{self.fn_root}{idx}.npy'), snap)
+                    del snap
+            except MemoryError:
+                print('Not enough memory to load a single time step. Bigger machine?')
+    
 
     def init_snap_array(self):
         n_snaps = len(self.fns)
