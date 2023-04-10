@@ -36,22 +36,29 @@ class ReadIn:
     def fns(self, value):
         self.fns = value
 
-    @property
-    def snaps(self, save=True):
+    def snaps(self, save=True, part=True):
         """
         This function reads in the data from the paraview files saves as an binary, and
         returns a numpy array of the data.
         :param save: If true, the data will be saved as a binary file.
+        :param part: If true, only the first snapshot will be saved.
         :return: A numpy array of the data.
         """
         try:
-            if exists(os.path.join(self.datp_dir, f'{self.fn_root}.npy')):
+            if part and exists(os.path.join(self.datp_dir, f'{self.fn_root}-part.npy')):
+                snaps = np.load(os.path.join(self.datp_dir, f'{self.fn_root}-part.npy'))
+            elif not part and exists(os.path.join(self.datp_dir, f'{self.fn_root}.npy')):
                 snaps = np.load(os.path.join(self.datp_dir, f'{self.fn_root}.npy'))
+            elif part:
+                snap = io.read_vti(os.path.join(self.datp_dir, self.fns[0]), self.length_scale)
+                snaps = snap.reshape(1, *np.shape(snap))
+                if save:
+                    np.save(os.path.join(self.datp_dir, f'{self.fn_root}-part.npy'), snaps)
             else:
                 snaps = np.empty(self.init_snap_array())
                 for idx, fn in tqdm(enumerate(self.fns)):
                     snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale)
-                    snaps[idx] = snap
+                    snaps[idx] = np.array(snap)
                     del snap
                 if save:
                     np.save(os.path.join(self.datp_dir, f'{self.fn_root}.npy'), snaps)

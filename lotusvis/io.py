@@ -36,7 +36,7 @@ def read_vtr(fn):
         y = np.array(data.GetYCoordinates())
         z = np.array(data.GetZCoordinates())
 
-        return np.transpose(vec, (0, 3, 2, 1)), np.transpose(sca, (0, 3, 2, 1)), np.array((x, y, z))
+        return np.array(np.transpose(vec, (0, 3, 2, 1)), np.transpose(sca, (0, 3, 2, 1)), np.array((x, y, z)))
     except ValueError:
         print('\n' + fn + ' corrupt, skipping for now')
 
@@ -58,8 +58,9 @@ def read_vti(file, length_scale):
     p = np.einsum('ijk -> jki', p)
 
     x, y, z = generate_grid(data, length_scale)
+    
 
-    return x, y, z, u, v, w, p
+    return np.array((x, y, z, u, v, w, p))
 
 
 def generate_grid(data, length_scale):
