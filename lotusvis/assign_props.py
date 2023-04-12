@@ -45,27 +45,38 @@ class AssignProps:
         dw_dx = np.gradient(self.W, axis=0, edge_order=2)
         return du_dz - dw_dx
     
-    def spline_cont(self, contour=1, stretch=4.):
+    def norm_vecs(self, contour=1, stretch=4.):
         """
         This only works for 2-D at the moment.
         Only works for single stretch.
+        Can probably do the stretch automatically with some scalled grid-diff like:
+        # print(4096*np.diff(self.X.mean(axis=2), axis=1).mean(), 4096*np.diff(self.Y.mean(axis=2), axis=0).mean())
         """
-        contours = find_contours(self.p, contour)
-        # Extract the outermost contour
+        # Get distance function
+        dis = self.p.mean(axis=2)
+        contours = find_contours(dis, contour)
+
+        # Extract the outermost contour positions
         boundary_coords = contours[0]
-        
-        xc, yc = boundary_coords[:, 1].astype(float), boundary_coords[:, 0].astype(float)
-
-
+        yc, xc = boundary_coords.T.astype(float)
         interp_x, interp_y = splineit(xc, yc, len(xc))
-
+        
+        # get gradients
         ddx = np.gradient(interp_x)
         ddy = np.gradient(interp_y, stretch)
-        mag = np.sqrt(ddx**2 + ddy**2)
 
+        # normal and normalise
+        mag = np.sqrt(ddx**2 + ddy**2)
         nx = -ddy / mag
         ny = ddx / mag
-        return nx, ny
+
+        # get index positions of the vectors
+        cont_coords = boundary_coords.T.astype(int)
+
+
+        xb, yb = self.X.mean(axis=2)[*cont_coords], self.Y.mean(axis=2)[*cont_coords]
+        return xb, yb, nx, ny
+
 
 
 def splineit(x, y, n):
