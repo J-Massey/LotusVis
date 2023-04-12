@@ -6,6 +6,8 @@
 @contact: jmom1n15@soton.ac.uk
 """
 import numpy as np
+from skimage.measure import find_contours
+from scipy import interpolate
 
 
 class AssignProps:
@@ -42,4 +44,40 @@ class AssignProps:
         du_dz = np.gradient(self.U, axis=2, edge_order=2)
         dw_dx = np.gradient(self.W, axis=0, edge_order=2)
         return du_dz - dw_dx
+    
+    def spline_cont(self, contour=1, stretch=4.):
+        """
+        This only works for 2-D at the moment.
+        Only works for single stretch.
+        """
+        contours = find_contours(self.p, contour)
+        # Extract the outermost contour
+        boundary_coords = contours[0]
+        
+        xc, yc = boundary_coords[:, 1].astype(float), boundary_coords[:, 0].astype(float)
+
+
+        interp_x, interp_y = splineit(xc, yc, len(xc))
+
+        ddx = np.gradient(interp_x)
+        ddy = np.gradient(interp_y, stretch)
+        mag = np.sqrt(ddx**2 + ddy**2)
+
+        nx = -ddy / mag
+        ny = ddx / mag
+        return nx, ny
+
+
+def splineit(x, y, n):
+    # get the cumulative distance along the contour
+    dist = np.sqrt((x[:-1] - x[1:])**2 + (y[:-1] - y[1:])**2)
+    dist_along = np.concatenate(([0], dist.cumsum()))
+
+    # build a spline representation of the contour
+    spline, u = interpolate.splprep([x, y], u=dist_along, s=0)
+
+    # resample it at smaller distance intervals to take gradient
+    interp_d = np.linspace(dist_along[0], dist_along[-1], n)
+    interp_x, interp_y = interpolate.splev(interp_d, spline)
+    return (interp_x, interp_y)
 
