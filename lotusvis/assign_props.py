@@ -45,7 +45,15 @@ class AssignProps:
         dw_dx = np.gradient(self.W, axis=0, edge_order=2)
         return du_dz - dw_dx
     
-    def norm_vecs(self, contour=1, stretch=4.):
+    def boundary_coords(self, contour=1.):
+        dis = self.p.mean(axis=2)
+        contours = find_contours(dis, contour)
+
+        # Extract the outermost contour positions
+        boundary_coords = contours[0]
+        return boundary_coords
+    
+    def norm_vecs(self, contour=1., stretch=4.):
         """
         This only works for 2-D at the moment.
         Only works for single stretch.
@@ -53,12 +61,8 @@ class AssignProps:
         # print(4096*np.diff(self.X.mean(axis=2), axis=1).mean(), 4096*np.diff(self.Y.mean(axis=2), axis=0).mean())
         """
         # Get distance function
-        dis = self.p.mean(axis=2)
-        contours = find_contours(dis, contour)
-
-        # Extract the outermost contour positions
-        boundary_coords = contours[0]
-        yc, xc = boundary_coords.T.astype(float)
+        
+        yc, xc = self.boundary_coords(contour).T.astype(float)
         interp_x, interp_y = splineit(xc, yc, len(xc))
         
         # get gradients
@@ -69,14 +73,12 @@ class AssignProps:
         mag = np.sqrt(ddx**2 + ddy**2)
         nx = -ddy / mag
         ny = ddx / mag
-
+        return nx, ny
+    
+    def body_contour_idx(self, contour=1.):
         # get index positions of the vectors
-        cont_coords = boundary_coords.T.astype(int)
-
-
-        xb, yb = self.X.mean(axis=2)[*cont_coords], self.Y.mean(axis=2)[*cont_coords]
-        return xb, yb, nx, ny
-
+        cont_coords = self.boundary_coords(contour).T.astype(int)
+        return cont_coords
 
 
 def splineit(x, y, n):

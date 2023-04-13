@@ -6,6 +6,7 @@
 """
 
 from genericpath import exists
+from itertools import count
 import os
 import time
 from tkinter import Tcl
@@ -13,6 +14,7 @@ from tkinter import Tcl
 import numpy as np
 from tqdm import tqdm
 import lotusvis.io as io
+import lotusvis.snap_iterator as snap_iterator
 
 
 class ReadIn:
@@ -35,6 +37,18 @@ class ReadIn:
     @fns.setter
     def fns(self, value):
         self.fns = value
+    
+    def snap_iterator(self):
+        return snap_iterator.Fn(self.fns)
+
+    def next_snap(self):
+        """
+        Iterator that gets the next timestep and returns a snap.
+        """
+        for n_fn in self.snap_iterator():
+            print(n_fn)
+            snap = io.read_vti(os.path.join(self.datp_dir, n_fn), self.length_scale)
+            yield snap.reshape(1, *np.shape(snap))
 
     def snaps(self, save=True, part=True):
         """
@@ -72,6 +86,7 @@ class ReadIn:
                     del snap
             except MemoryError:
                 print('Not enough memory to load a single time step. Bigger machine?')
+
     
 
     def init_snap_array(self):
