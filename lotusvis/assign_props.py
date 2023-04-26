@@ -46,6 +46,10 @@ class AssignProps:
         return du_dz - dw_dx
     
     def boundary_coords(self, contour=1.):
+        """
+        Takes in the contour level, which is a contour of the distance function.
+        Returns the y and x coordinates of this boundary.
+        """
         dis = self.p.mean(axis=2)
         contours = find_contours(dis, contour)
 
@@ -56,9 +60,6 @@ class AssignProps:
     def norm_vecs(self, contour=1., stretch=4.):
         """
         This only works for 2-D at the moment.
-        Only works for single stretch.
-        Can probably do the stretch automatically with some scalled grid-diff like:
-        # print(4096*np.diff(self.X.mean(axis=2), axis=1).mean(), 4096*np.diff(self.Y.mean(axis=2), axis=0).mean())
         """
         # Get distance function
         
@@ -79,6 +80,21 @@ class AssignProps:
         # get index positions of the vectors
         cont_coords = self.boundary_coords(contour).T.astype(int)
         return cont_coords
+    
+    def tang_vecs(self, contour=1., stretch=4.):
+        t1, t2 = self.norm_vecs(contour, stretch)
+        return t2, -t1
+
+    def scaled_body_contour_idx(self, contour=1., SF=1):
+        # Flag: untested
+        # get index positions of the vectors
+        cont_coords = self.boundary_coords(contour).T.astype(int)
+        original_origin = cont_coords[0].mean(), cont_coords[1].mean()
+
+        scale_coords = self.boundary_coords(contour) * SF
+        scale_coords = scale_coords.T.astype(int)
+        scaled_origin = cont_coords[0].mean(), cont_coords[1].mean()
+        return scale_coords - original_origin + scaled_origin
 
 
 def splineit(x, y, n):
