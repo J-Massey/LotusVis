@@ -17,7 +17,7 @@ Install the package
 
 	git clone https://github.com/J-Massey/lotusvis.git
 	cd lotusvis
-	sudo pip3 install -e .
+	sudo pip install -e .
 	
 Or on iridis
 
