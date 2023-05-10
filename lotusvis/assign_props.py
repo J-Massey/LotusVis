@@ -29,8 +29,8 @@ class AssignProps:
 
     @property
     def vorticity_z(self):
-        dv_dx = np.gradient(self.V, axis=0, edge_order=2)
-        du_dy = np.gradient(self.U, axis=1, edge_order=2)
+        dv_dx = np.gradient(self.V, axis=1, edge_order=2)
+        du_dy = np.gradient(self.U, axis=0, edge_order=2)
         return dv_dx - du_dy
 
     @property
