@@ -9,8 +9,8 @@ def func(x):
 
 
 def read(sim_dir):
-    sim = ReadIn(sim_dir, "body", 4096, ext="vti")
-    return sim.snaps()
+    sim = ReadIn(sim_dir, "fluid", 4096, ext="vti")
+    return sim.snaps(save=False)
 
 
 def assign_props(snaps):
@@ -38,11 +38,11 @@ class TestIO(unittest.TestCase):
     def test_norms(self):
         self.assertTrue(norms(read(f"{Path.cwd()}/pytests/test_data")).shape  == (91,))
 
-if __name__ == '__main__':
-    unittest.main()
+# if __name__ == '__main__':
+#     unittest.main()
 # test_answer()
 
-# if __name__ == "__main__":
-#     sim_dir = f"{Path.cwd()}/pytests/test_data"
-#     # assign_props(read(sim_dir))
-#     print((read(sim_dir)).shape)
+if __name__ == "__main__":
+    sim_dir = f"{Path.cwd()}/pytests/test_data"
+    # assign_props(read(sim_dir))
+    print((read(sim_dir)).shape)

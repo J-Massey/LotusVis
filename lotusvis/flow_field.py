@@ -46,11 +46,10 @@ class ReadIn:
         Iterator that gets the next timestep and returns a snap.
         """
         for n_fn in self.snap_iterator():
-            print(n_fn)
             snap = io.read_vti(os.path.join(self.datp_dir, n_fn), self.length_scale)
             yield snap.reshape(1, *np.shape(snap))
 
-    def snaps(self, save=True, part=True):
+    def snaps(self, save=True, part=True, save_path=None):
         """
         This function reads in the data from the paraview files saves as an binary, and
         returns a numpy array of the data.
@@ -75,8 +74,41 @@ class ReadIn:
                     snaps[idx] = np.array(snap)
                     del snap
                 if save:
-                    np.save(os.path.join(self.datp_dir, f'{self.fn_root}.npy'), snaps)
+                    if save_path is not None:
+                        np.save(os.path.join(save_path, f'{self.fn_root}.npy'), snaps)
+                    else:
+                        np.save(os.path.join(self.datp_dir, f'{self.fn_root}.npy'), snaps)
             return snaps
+        except MemoryError:
+            print('Not enough memory to load all the data, at once saving individual time steps as binary and trying again')
+            try:
+                for idx, fn in tqdm(enumerate(self.fns)):
+                    snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale)
+                    np.save(os.path.join(self.datp_dir, f'{self.fn_root}{idx}.npy'), snap)
+                    del snap
+            except MemoryError:
+                print('Not enough memory to load a single time step. Bigger machine?')
+
+    def save_vorticity_field(self, save_path=None):
+        """
+        This function reads in the data from the paraview files saves as an binary, and
+        returns a numpy array of just the vorticity field.
+        :param save: If true, the data will be saved as a binary file.
+        :param part: If true, only the first snapshot will be saved.
+        :return: A numpy array of the data.
+        """
+        try:
+            snaps = np.empty(self.init_snap_array())
+            for idx, fn in tqdm(enumerate(self.fns)):
+                snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale)
+                snaps[idx] = np.array(snap)
+                del snap
+            if save:
+                if save_path is not None:
+                    np.save(os.path.join(save_path, f'{self.fn_root}.npy'), snaps)
+                else:
+                    np.save(os.path.join(self.datp_dir, f'{self.fn_root}.npy'), snaps)
+            return print('Vorticity field saved')
         except MemoryError:
             print('Not enough memory to load all the data, at once saving individual time steps as binary and trying again')
             try:

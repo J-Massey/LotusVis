@@ -14,24 +14,50 @@ class AssignProps:
     """
     Read in a snapshot of a data field and output the main properties.
     """
-    def __init__(self, snap):
+    def __init__(self, snap, length_scale=1024):
         self.snap = snap
         del snap
-        self.X, self.Y, self.Z = self.snap[0:3]
-        u, v, w = self.snap[3:-1]
+        self.x = self.snap[:, 0][0, 0 , :, 0]
+        self.y = self.snap[:, 1][0, :, 0, 0]
+        self.z = self.snap[:, 2][0, 0, 0, :]
+        self.X, self.Y, self.Z = self.snap[:, 0], self.snap[:, 1], self.snap[:, 2]
+
+        u = self.snap[:, 3]
+        v = self.snap[:, 4]
+        w = self.snap[:, 5]
         self.U, self.V, self.W = u, v, w
-        self.p = self.snap[-1]
+        self.p = self.snap[:, 6]
+        self.t = np.array([id*np.ones_like(self.X[0]) for id in range(self.X.shape[0])])
         del u, v, w, self.snap
+        self.length_scale = length_scale
     
     @property
     def magnitude(self):
         return np.sqrt(self.Z ** 2 + self.V ** 2 + self.U ** 2)
+    
+    @property
+    def dudx(self):
+        dudx = np.gradient(self.U, self.length_scale*np.mean(np.diff(self.x)), axis=2, edge_order=2)
+        return dudx
+    
+    @property
+    def dudy(self):
+        dudy = np.gradient(self.U, self.length_scale*np.mean(np.diff(self.y)), axis=1, edge_order=2)
+        return dudy
+    
+    @property
+    def dvdx(self):
+        dvdx = np.gradient(self.V, self.length_scale*np.mean(np.diff(self.x)), axis=2, edge_order=2)
+        return dvdx
+    
+    @property
+    def dvdy(self):
+        dvdy = np.gradient(self.V, self.length_scale*np.mean(np.diff(self.y)), axis=1, edge_order=2)
+        return dvdy
 
     @property
     def vorticity_z(self):
-        dv_dx = np.gradient(self.V, axis=1, edge_order=2)
-        du_dy = np.gradient(self.U, axis=0, edge_order=2)
-        return dv_dx - du_dy
+        return self.dvdx - self.dudy
 
     @property
     def vorticity_x(self):

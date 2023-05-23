@@ -4,7 +4,9 @@
 @description: This script helps in reading and formatting data from outside the module
 @contact: jmom1n15@soton.ac.uk
 """
+from pathlib import Path
 import warnings
+from matplotlib import pyplot as plt
 
 import numpy as np
 import vtk
@@ -57,21 +59,27 @@ def read_vti(file, length_scale):
     p = np.array(point_data.GetScalars('Pressure')).reshape(sh)
     p = np.einsum('ijk -> jki', p)
 
-    x, y, z = generate_grid(data, length_scale)
-    
+    bounds = data.GetBounds()
+    x, y, z = generate_grid(data.GetDimensions(), bounds, length_scale)
 
     return np.array((x, y, z, u, v, w, p))
 
 
-def generate_grid(data, length_scale):
-    xmin, xmax, ymin, ymax, zmin, zmax = data.GetBounds()
-    shape = data.GetDimensions()
-    grid_x = np.linspace(xmin, xmax, shape[0])
-    grid_y = np.linspace(ymin, ymax, shape[1])
-    grid_z = np.linspace(zmin, zmax, shape[2])
-    x, y, z = np.meshgrid(grid_x / length_scale, grid_y / length_scale, grid_z / length_scale, indexing='xy')
-    return x, y, z
+def generate_grid(sh, bounds, length_scale):
+    xmin, xmax, ymin, ymax, zmin, zmax = bounds
+    grid_x = np.linspace(xmin, xmax, sh[0])
+    grid_y = np.linspace(ymin, ymax, sh[1])
+    grid_z = np.linspace(zmin, zmax, sh[2])
+    x, y, z = np.meshgrid(grid_x, grid_y, grid_z, indexing='xy')
+    return x/length_scale, y/length_scale, z/length_scale
 
+
+def sparse_vti_grid(sh, bounds, length_scale):
+    xmin, xmax, ymin, ymax, zmin, zmax = bounds
+    grid_x = np.linspace(xmin, xmax, sh[0])/length_scale
+    grid_y = np.linspace(ymin, ymax, sh[1])/length_scale
+    grid_z = np.linspace(zmin, zmax, sh[2])/length_scale
+    return grid_x, grid_y, grid_z
 
 # def vtr_format_2d(fn, length_scale, rotation=0):
 #     """
@@ -103,3 +111,7 @@ def generate_grid(data, length_scale):
 #     p = data[1]
 #     p = np.reshape(p, [np.shape(p)[0], np.shape(p)[2], np.shape(p)[3]])
 #     return X, Y, U, V, w, p
+
+if __name__ =="__main__":
+    sim_dir = f"{Path.cwd()}/pytests/test_data"
+    
