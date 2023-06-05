@@ -43,18 +43,4 @@ class Decompositions(ReadIn):
         snapshot_shape = np.shape(io.read_vti(os.path.join(self.datp_dir, self.fns[0]), self.length_scale))
         return (n_phase_snaps,) + snapshot_shape
 
-    # TODO: There's some array mismatch bug in time_avg, probably to do with the fact vti_format doesn't exist :/
-    def time_average(self):
-        snaps = np.array([])
-        for idx, fn in enumerate(self.fns):
-            if self.ext == 'vti':
-                print(fn)
-                snap = io.vti_format(os.path.join(self.datp_dir, fn), self.length_scale)
-            else:
-                snap = io.vtr_format_2d(os.path.join(self.datp_dir, self.fns[-1]), self.length_scale)
-            snaps = np.append(snaps, snap)
-        del snap
-        # Time average the flow field snaps
-        print(np.shape(snaps))
-        t_mean = np.mean(snaps, axis=0)
-        return t_mean
+    

@@ -90,7 +90,7 @@ class ReadIn:
             except MemoryError:
                 print('Not enough memory to load a single time step. Bigger machine?')
 
-    def save_vorticity_field(self, save_path=None):
+    def save_vorticity_field(self, save_path="None"):
         """
         This function reads in the data from the paraview files saves as an binary, and
         returns a numpy array of just the vorticity field.
@@ -105,7 +105,7 @@ class ReadIn:
                 snaps[idx] = np.array(snap)
                 del snap
             snaps = AssignProps(snaps, self.length_scale).vorticity_z
-            if save_path is not None:
+            if save_path is not "":
                 np.save(os.path.join(save_path, f'{self.fn_root}_vortz.npy'), snaps)
             else:
                 np.save(os.path.join(self.datp_dir, f'{self.fn_root}_vortz.npy'), snaps)
@@ -114,13 +114,16 @@ class ReadIn:
         except MemoryError:
             print('Not enough memory to load all the data, at once saving individual time steps as binary and trying again')
             try:
-                for idx, fn in tqdm(enumerate(self.fns)):
-                    snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale)
-                    snap = AssignProps(snap, self.length_scale).vorticity_x
-                    np.save(os.path.join(self.datp_dir, f'{self.fn_root}_vortz{idx}.npy'), snap)
-                    del snap
+                self.vort_low_memory_saver(save_path)
             except MemoryError:
                 print('Not enough memory to load a single time step. Bigger machine?')
+
+    def vort_low_memory_saver(self, save_path=""):
+        for idx, fn in tqdm(enumerate(self.fns)):
+            snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale)
+            snap = AssignProps(snap.reshape(1, *np.shape(snap)), self.length_scale).vorticity_z
+            np.save(os.path.join(save_path, f'{self.fn_root}_vortz{idx}.npy'), snap)
+            del snap
 
     def save_sdf(self, save_path=None):
         """
@@ -154,6 +157,13 @@ class ReadIn:
                 return snap
             except MemoryError:
                 print('Not enough memory to load a single time step. Bigger machine?')
+
+    def save_sdf_low_memory(self, save_path=""):
+        for idx, fn in tqdm(enumerate(self.fns)):
+            snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale)
+            snap = AssignProps(snap.reshape(1, *np.shape(snap)), self.length_scale).p
+            np.save(os.path.join(save_path, f'{self.fn_root}_p{idx}.npy'), snap)
+            del snap
 
 
     def init_snap_array(self):
