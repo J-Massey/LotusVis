@@ -105,7 +105,7 @@ class ReadIn:
                 snaps[idx] = np.array(snap)
                 del snap
             snaps = AssignProps(snaps, self.length_scale).vorticity_z
-            if save_path is not "":
+            if save_path != "":
                 np.save(os.path.join(save_path, f'{self.fn_root}_vortz.npy'), snaps)
             else:
                 np.save(os.path.join(self.datp_dir, f'{self.fn_root}_vortz.npy'), snaps)
@@ -125,19 +125,17 @@ class ReadIn:
             np.save(os.path.join(save_path, f'{self.fn_root}_vortz{idx}.npy'), snap)
             del snap
 
-    def u_low_memory_saver(self, save_path=""):
-        for idx, fn in tqdm(enumerate(self.fns)):
-            snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale)
-            snap = AssignProps(snap.reshape(1, *np.shape(snap)), self.length_scale).U
-            np.save(os.path.join(save_path, f'{self.fn_root}_u{idx}.npy'), snap)
-            del snap
+    def u_low_memory_saver(self, fn, count, save_path=""):
+        snap = io.read_vti(fn, self.length_scale)
+        snap = AssignProps(snap.reshape(1, *np.shape(snap)), self.length_scale).U
+        np.save(os.path.join(save_path, f'{self.fn_root}_u{count}.npy'), snap)
+        del snap
 
-    def v_low_memory_saver(self, save_path=""):
-        for idx, fn in tqdm(enumerate(self.fns)):
-            snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale)
-            snap = AssignProps(snap.reshape(1, *np.shape(snap)), self.length_scale).V
-            np.save(os.path.join(save_path, f'{self.fn_root}_v{idx}.npy'), snap)
-            del snap
+    def v_low_memory_saver(self, fn, count, save_path=""):
+        snap = io.read_vti(fn, self.length_scale)
+        snap = AssignProps(snap.reshape(1, *np.shape(snap)), self.length_scale).V
+        np.save(os.path.join(save_path, f'{self.fn_root}_v{count}.npy'), snap)
+        del snap
 
     def save_sdf(self, save_path=None):
         """
@@ -172,12 +170,11 @@ class ReadIn:
             except MemoryError:
                 print('Not enough memory to load a single time step. Bigger machine?')
 
-    def save_sdf_low_memory(self, save_path=""):
-        for idx, fn in tqdm(enumerate(self.fns)):
-            snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale)
-            snap = AssignProps(snap.reshape(1, *np.shape(snap)), self.length_scale).p
-            np.save(os.path.join(save_path, f'{self.fn_root}_p{idx}.npy'), snap)
-            del snap
+    def save_sdf_low_memory(self, fn, count, save_path=""):
+        snap = io.read_vti(fn, self.length_scale)
+        snap = AssignProps(snap.reshape(1, *np.shape(snap)), self.length_scale).p
+        np.save(os.path.join(save_path, f'{self.fn_root}_p{count}.npy'), snap)
+        del snap
 
     def init_snap_array(self):
         n_snaps = len(self.fns)
