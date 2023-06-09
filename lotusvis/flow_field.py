@@ -125,6 +125,20 @@ class ReadIn:
             np.save(os.path.join(save_path, f'{self.fn_root}_vortz{idx}.npy'), snap)
             del snap
 
+    def u_low_memory_saver(self, save_path=""):
+        for idx, fn in tqdm(enumerate(self.fns)):
+            snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale)
+            snap = AssignProps(snap.reshape(1, *np.shape(snap)), self.length_scale).U
+            np.save(os.path.join(save_path, f'{self.fn_root}_vortz{idx}.npy'), snap)
+            del snap
+
+    def v_low_memory_saver(self, save_path=""):
+        for idx, fn in tqdm(enumerate(self.fns)):
+            snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale)
+            snap = AssignProps(snap.reshape(1, *np.shape(snap)), self.length_scale).V
+            np.save(os.path.join(save_path, f'{self.fn_root}_vortz{idx}.npy'), snap)
+            del snap
+
     def save_sdf(self, save_path=None):
         """
         This function reads in the data from the paraview files saves as an binary, and
