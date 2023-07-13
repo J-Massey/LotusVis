@@ -136,6 +136,12 @@ class ReadIn:
         snap = AssignProps(snap.reshape(1, *np.shape(snap)), self.length_scale).V
         np.save(os.path.join(save_path, f'{self.fn_root}_v{count}.npy'), snap)
         del snap
+    
+    def p_low_memory_saver(self, fn, count, save_path=""):
+        snap = io.read_vti(fn, self.length_scale)
+        snap = AssignProps(snap.reshape(1, *np.shape(snap)), self.length_scale).p
+        np.save(os.path.join(save_path, f'{self.fn_root}_p{count}.npy'), snap)
+        del snap
 
     def save_sdf(self, save_path=None):
         """
