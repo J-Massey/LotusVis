@@ -34,7 +34,6 @@ class Plots(ReadIn):
         return dv_dx - du_dy
 
     def plot_mag(self, fn_save, **kwargs):
-        plt.style.use(['science', 'grid'])
         fig, ax = plt.subplots(figsize=(7, 5))
         divider = make_axes_locatable(ax)
         # Plot the window of interest
