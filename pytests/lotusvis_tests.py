@@ -9,13 +9,13 @@ def func(x):
 
 
 def read(sim_dir):
-    sim = ReadIn(sim_dir, "body", 4096, ext="vti")
-    return sim.snaps()
+    sim = ReadIn(sim_dir, "fluid", 4096, ext="vti")
+    return sim.snaps(save=False)
 
 
 def assign_props(snaps):
-    snap = AssignProps(snaps[0])
-    return snap.p
+    snap = AssignProps(snaps)
+    return snap.U[0]
 
 
 def norms(snaps):
@@ -30,19 +30,16 @@ class TestIO(unittest.TestCase):
         self.assertTrue(func(3) == 4)
 
     def test_read(self):
-        self.assertTrue(read(f"{Path.cwd()}/pytests/test_data").shape == (1, 7, 103, 97, 1))
+        self.assertTrue(read(f"{Path.cwd()}/pytests/test_data").shape == (1, 4, 103, 97, 1))
 
     def test_assign(self):
         self.assertTrue(assign_props(read(f"{Path.cwd()}/pytests/test_data")).shape  == (103, 97, 1))
     
     def test_norms(self):
-        self.assertTrue(norms(read(f"{Path.cwd()}/pytests/test_data")).shape  == (91,))
+        self.assertTrue(norms(read(f"{Path.cwd()}/pytests/test_data")).shape  == (97,))
 
 if __name__ == '__main__':
     unittest.main()
-# test_answer()
 
 # if __name__ == "__main__":
-#     sim_dir = f"{Path.cwd()}/pytests/test_data"
-#     # assign_props(read(sim_dir))
-#     print((read(sim_dir)).shape)
+#     print(norms(read(f"{Path.cwd()}/pytests/test_data")).shape)

@@ -9,7 +9,10 @@ lotusvis/assign_props.py
 lotusvis/decompositions.py
 lotusvis/flow_calcs.py
 lotusvis/flow_field.py
+lotusvis/ftle.py
 lotusvis/io.py
 lotusvis/plot_flow.py
 lotusvis/plot_vtr.py
 lotusvis/save.py
+lotusvis/snap_iterator.py
+lotusvis/spod.py

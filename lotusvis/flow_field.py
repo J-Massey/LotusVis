@@ -15,6 +15,7 @@ import numpy as np
 from tqdm import tqdm
 import lotusvis.io as io
 import lotusvis.snap_iterator as snap_iterator
+from lotusvis.assign_props import AssignProps
 
 
 class ReadIn:
@@ -46,11 +47,10 @@ class ReadIn:
         Iterator that gets the next timestep and returns a snap.
         """
         for n_fn in self.snap_iterator():
-            print(n_fn)
             snap = io.read_vti(os.path.join(self.datp_dir, n_fn), self.length_scale)
             yield snap.reshape(1, *np.shape(snap))
 
-    def snaps(self, save=True, part=True):
+    def snaps(self, save=True, part=True, save_path=None):
         """
         This function reads in the data from the paraview files saves as an binary, and
         returns a numpy array of the data.
@@ -75,7 +75,10 @@ class ReadIn:
                     snaps[idx] = np.array(snap)
                     del snap
                 if save:
-                    np.save(os.path.join(self.datp_dir, f'{self.fn_root}.npy'), snaps)
+                    if save_path is not None:
+                        np.save(os.path.join(save_path, f'{self.fn_root}.npy'), snaps)
+                    else:
+                        np.save(os.path.join(self.datp_dir, f'{self.fn_root}.npy'), snaps)
             return snaps
         except MemoryError:
             print('Not enough memory to load all the data, at once saving individual time steps as binary and trying again')
@@ -87,7 +90,97 @@ class ReadIn:
             except MemoryError:
                 print('Not enough memory to load a single time step. Bigger machine?')
 
+    def save_vorticity_field(self, save_path="None"):
+        """
+        This function reads in the data from the paraview files saves as an binary, and
+        returns a numpy array of just the vorticity field.
+        :param save: If true, the data will be saved as a binary file.
+        :param part: If true, only the first snapshot will be saved.
+        :return: A numpy array of the data.
+        """
+        try:
+            snaps = np.empty(self.init_snap_array())
+            for idx, fn in tqdm(enumerate(self.fns)):
+                snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale)
+                snaps[idx] = np.array(snap)
+                del snap
+            snaps = AssignProps(snaps, self.length_scale).vorticity_z
+            if save_path != "":
+                np.save(os.path.join(save_path, f'{self.fn_root}_vortz.npy'), snaps)
+            else:
+                np.save(os.path.join(self.datp_dir, f'{self.fn_root}_vortz.npy'), snaps)
+            print('Vorticity field saved')
+            return snaps
+        except MemoryError:
+            print('Not enough memory to load all the data, at once saving individual time steps as binary and trying again')
+            try:
+                self.vort_low_memory_saver(save_path)
+            except MemoryError:
+                print('Not enough memory to load a single time step. Bigger machine?')
+
+    def vort_low_memory_saver(self, save_path=""):
+        for idx, fn in tqdm(enumerate(self.fns)):
+            snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale)
+            snap = AssignProps(snap.reshape(1, *np.shape(snap)), self.length_scale).vorticity_z
+            np.save(os.path.join(save_path, f'{self.fn_root}_vortz{idx}.npy'), snap)
+            del snap
+
+    def u_low_memory_saver(self, fn, count, save_path=""):
+        snap = io.read_vti(fn, self.length_scale)
+        snap = AssignProps(snap.reshape(1, *np.shape(snap)), self.length_scale).U
+        np.save(os.path.join(save_path, f'{self.fn_root}_u{count}.npy'), snap)
+        del snap
+
+    def v_low_memory_saver(self, fn, count, save_path=""):
+        snap = io.read_vti(fn, self.length_scale)
+        snap = AssignProps(snap.reshape(1, *np.shape(snap)), self.length_scale).V
+        np.save(os.path.join(save_path, f'{self.fn_root}_v{count}.npy'), snap)
+        del snap
     
+    def p_low_memory_saver(self, fn, count, save_path=""):
+        snap = io.read_vti(fn, self.length_scale)
+        snap = AssignProps(snap.reshape(1, *np.shape(snap)), self.length_scale).p
+        np.save(os.path.join(save_path, f'{self.fn_root}_p{count}.npy'), snap)
+        del snap
+
+    def save_sdf(self, save_path=None):
+        """
+        This function reads in the data from the paraview files saves as an binary, and
+        returns a numpy array of just the sdf field of the body.
+        :param save: If true, the data will be saved as a binary file.
+        :param part: If true, only the first snapshot will be saved.
+        :return: A numpy array of the data.
+        """
+        try:
+            snaps = np.empty(self.init_snap_array())
+            for idx, fn in tqdm(enumerate(self.fns)):
+                snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale)
+                snaps[idx] = np.array(snap)
+                del snap
+            snaps = AssignProps(snaps, self.length_scale).p
+            if save_path is not None:
+                np.save(os.path.join(save_path, f'{self.fn_root}_p.npy'), snaps)
+            else:
+                np.save(os.path.join(self.datp_dir, f'{self.fn_root}_p.npy'), snaps)
+            print('SDF/pressure field saved')
+            return snaps
+        except MemoryError:
+            print('Not enough memory to load all the data, at once saving individual time steps as binary and trying again')
+            try:
+                for idx, fn in tqdm(enumerate(self.fns)):
+                    snap = io.read_vti(os.path.join(self.datp_dir, fn), self.length_scale)
+                    snap = AssignProps(snap, self.length_scale).p
+                    np.save(os.path.join(self.datp_dir, f'{self.fn_root}_p{idx}.npy'), snap)
+                    del snap
+                return snap
+            except MemoryError:
+                print('Not enough memory to load a single time step. Bigger machine?')
+
+    def save_sdf_low_memory(self, fn, count, save_path=""):
+        snap = io.read_vti(fn, self.length_scale)
+        snap = AssignProps(snap.reshape(1, *np.shape(snap)), self.length_scale).p
+        np.save(os.path.join(save_path, f'{self.fn_root}_p{count}.npy'), snap)
+        del snap
 
     def init_snap_array(self):
         n_snaps = len(self.fns)
