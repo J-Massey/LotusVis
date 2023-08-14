@@ -59,10 +59,7 @@ def read_vti(file, length_scale):
     p = np.array(point_data.GetScalars('Pressure')).reshape(sh)
     p = np.einsum('ijk -> jki', p)
 
-    bounds = data.GetBounds()
-    x, y, z = generate_grid(data.GetDimensions(), bounds, length_scale)
-
-    return np.array((x, y, z, u, v, w, p))
+    return np.array((u, v, w, p))
 
 
 def generate_grid(sh, bounds, length_scale):

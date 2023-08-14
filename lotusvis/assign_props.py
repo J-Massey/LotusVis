@@ -17,16 +17,16 @@ class AssignProps:
     def __init__(self, snap, length_scale=1024):
         self.snap = snap
         del snap
-        self.x = self.snap[:, 0][0, 0 , :, 0]
-        self.y = self.snap[:, 1][0, :, 0, 0]
-        self.z = self.snap[:, 2][0, 0, 0, :]
-        self.X, self.Y, self.Z = self.snap[:, 0], self.snap[:, 1], self.snap[:, 2]
+        # self.x = self.snap[:, 0][0, 0 , :, 0]
+        # self.y = self.snap[:, 1][0, :, 0, 0]
+        # self.z = self.snap[:, 2][0, 0, 0, :]
+        # self.X, self.Y, self.Z = self.snap[:, 0], self.snap[:, 1], self.snap[:, 2]
 
-        u = self.snap[:, 3]
-        v = self.snap[:, 4]
-        w = self.snap[:, 5]
+        u = self.snap[:, 0]
+        v = self.snap[:, 1]
+        w = self.snap[:, 2]
         self.U, self.V, self.W = u, v, w
-        self.p = self.snap[:, 6]
+        self.p = self.snap[:, 3]
         self.t = np.array([id*np.ones_like(self.X[0]) for id in range(self.X.shape[0])])
         del u, v, w, self.snap
         self.length_scale = length_scale

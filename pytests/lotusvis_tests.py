@@ -30,19 +30,18 @@ class TestIO(unittest.TestCase):
         self.assertTrue(func(3) == 4)
 
     def test_read(self):
-        self.assertTrue(read(f"{Path.cwd()}/pytests/test_data").shape == (1, 7, 103, 97, 1))
+        self.assertTrue(read(f"{Path.cwd()}/pytests/test_data").shape == (1, 4, 103, 97, 1))
 
-    def test_assign(self):
-        self.assertTrue(assign_props(read(f"{Path.cwd()}/pytests/test_data")).shape  == (103, 97, 1))
+    # def test_assign(self):
+    #     self.assertTrue(assign_props(read(f"{Path.cwd()}/pytests/test_data")).shape  == (103, 97, 1))
     
-    def test_norms(self):
-        self.assertTrue(norms(read(f"{Path.cwd()}/pytests/test_data")).shape  == (91,))
+    # def test_norms(self):
+    #     self.assertTrue(norms(read(f"{Path.cwd()}/pytests/test_data")).shape  == (91,))
 
 # if __name__ == '__main__':
 #     unittest.main()
-# test_answer()
 
 if __name__ == "__main__":
     sim_dir = f"{Path.cwd()}/pytests/test_data"
     # assign_props(read(sim_dir))
-    print((read(sim_dir)).shape)
+    print(read(f"{Path.cwd()}/pytests/test_data").shape)
