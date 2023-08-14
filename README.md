@@ -24,7 +24,7 @@ Or on iridis
 	git clone https://github.com/J-Massey/lotusvis.git
 	cd lotusvis
 	pip install --user -r requirements.txt
-	pip install --user .
+	pip install -e .
 
 To dump the visualisations copy the function from `main.py` and add to the `run.py` script. It should be quick because all the files we're accessing will have been the most recently written and all of them should be cached in memory.
 
