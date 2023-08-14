@@ -1,9 +1,11 @@
 vtk
 setuptools
 numpy
+scipy
 matplotlib
 seaborn
 scienceplots
 tqdm
-skimage
+scikit-image
 pathlib
+unittest
