@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 @author: Jonathan Massey
 @description: This is a class that assigns the main properties of the data to easily interface
@@ -17,11 +16,7 @@ class AssignProps:
     def __init__(self, snap, length_scale=1024):
         self.snap = snap
         del snap
-        # self.x = self.snap[:, 0][0, 0 , :, 0]
-        # self.y = self.snap[:, 1][0, :, 0, 0]
-        # self.z = self.snap[:, 2][0, 0, 0, :]
-        # self.X, self.Y, self.Z = self.snap[:, 0], self.snap[:, 1], self.snap[:, 2]
-
+        
         u = self.snap[:, 0]
         v = self.snap[:, 1]
         w = self.snap[:, 2]
