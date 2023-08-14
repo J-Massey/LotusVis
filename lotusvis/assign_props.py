@@ -27,7 +27,7 @@ class AssignProps:
         w = self.snap[:, 2]
         self.U, self.V, self.W = u, v, w
         self.p = self.snap[:, 3]
-        self.t = np.array([id*np.ones_like(self.X[0]) for id in range(self.X.shape[0])])
+        # self.t = np.array([id*np.ones_like(self.X[0]) for id in range(self.X.shape[0])])
         del u, v, w, self.snap
         self.length_scale = length_scale
     

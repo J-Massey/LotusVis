@@ -3,6 +3,7 @@ setuptools
 numpy
 matplotlib
 seaborn
-SciencePlots
+scienceplots
 tqdm
 skimage
+pathlib
