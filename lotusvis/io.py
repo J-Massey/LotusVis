@@ -4,7 +4,7 @@
 @description: This script helps in reading and formatting data from outside the module
 @contact: jmom1n15@soton.ac.uk
 """
-from pathlib import Path
+import os
 import warnings
 from matplotlib import pyplot as plt
 
@@ -49,5 +49,5 @@ def sparse_vti_grid(sh, bounds, length_scale):
 
 
 if __name__ =="__main__":
-    sim_dir = f"{Path.cwd()}/pytests/test_data"
+    sim_dir = f"{os.getcwd()}/pytests/test_data"
     

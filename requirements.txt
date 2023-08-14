@@ -7,5 +7,4 @@ seaborn
 scienceplots
 tqdm
 scikit-image
-pathlib
-unittest
+os

@@ -4,7 +4,6 @@
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 import os
-from pathlib import Path
 from matplotlib.lines import Line2D
 import numpy as np
 
@@ -23,7 +22,7 @@ plt.rcParams["font.size"] = "10.5"
 
 def extract_delta(re):
     # Extract the delta profiles for a given Reynolds number
-    sim_dir = f"{Path.cwd()}/analysis/visualise-outer-scale/{re}k/0-2d"
+    sim_dir = f"{os.getcwd()}/analysis/visualise-outer-scale/{re}k/0-2d"
     vel = ReadIn(sim_dir, 'fluid', 1024, ext='vti')
     profiles = np.zeros((np.shape(vel.snaps)[0], np.shape(vel.snaps)[2]))
     ys = np.zeros((np.shape(vel.snaps)[0], np.shape(vel.snaps)[2])) 
@@ -141,7 +140,7 @@ def plot_bl_ontop():
 
     ax.legend(handles=re_legend(), loc=2)
     
-    plt.savefig(f"{Path.cwd()}/analysis/figures/bl-on-top.pdf", dpi=200, transparent=True)
+    plt.savefig(f"{os.getcwd()}/analysis/figures/bl-on-top.pdf", dpi=200, transparent=True)
 
 
 def plot_bl_seperated():
@@ -160,7 +159,7 @@ def plot_bl_seperated():
         ax.add_artist(l2)
 
     
-    plt.savefig(f"{Path.cwd()}/analysis/figures/bl.pdf", dpi=200, transparent=True)
+    plt.savefig(f"{os.getcwd()}/analysis/figures/bl.pdf", dpi=200, transparent=True)
 
 
 if __name__ == "__main__":

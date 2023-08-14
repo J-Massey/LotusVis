@@ -4,10 +4,8 @@
 @description: This script helps in reading and formatting data from outside the module
 @contact: jmom1n15@soton.ac.uk
 """
-from pathlib import Path
+import os
 import warnings
-from matplotlib import pyplot as plt
-
 import numpy as np
 import vtk
 
@@ -85,7 +83,7 @@ def sparse_vti_grid(sh, bounds, length_scale):
 #     """
 #     Rotates and scales vtr file
 #     Args:
-#         fn: The path to the 'datp' folder
+#         fn: The os getto the 'datp' folder
 #         length_scale: length scale of the simulation
 #         rotation: Rotate the grid. If you're running a simulation with
 #                   an angle of attack, it's better to rotate the flow than
@@ -113,5 +111,5 @@ def sparse_vti_grid(sh, bounds, length_scale):
 #     return X, Y, U, V, w, p
 
 if __name__ =="__main__":
-    sim_dir = f"{Path.cwd()}/pytests/test_data"
+    sim_dir = f"{os.getcwd()}/pytests/test_data"
     

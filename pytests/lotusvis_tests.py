@@ -1,5 +1,5 @@
 import unittest
-from pathlib import Path
+from os
 from lotusvis.assign_props import AssignProps
 from lotusvis.flow_field import ReadIn
 
@@ -30,16 +30,16 @@ class TestIO(unittest.TestCase):
         self.assertTrue(func(3) == 4)
 
     def test_read(self):
-        self.assertTrue(read(f"{Path.cwd()}/pytests/test_data").shape == (1, 4, 103, 97, 1))
+        self.assertTrue(read(f"{os.getcwd()}/pytests/test_data").shape == (1, 4, 103, 97, 1))
 
     def test_assign(self):
-        self.assertTrue(assign_props(read(f"{Path.cwd()}/pytests/test_data")).shape  == (103, 97, 1))
+        self.assertTrue(assign_props(read(f"{os.getcwd()}/pytests/test_data")).shape  == (103, 97, 1))
     
     def test_norms(self):
-        self.assertTrue(norms(read(f"{Path.cwd()}/pytests/test_data")).shape  == (97,))
+        self.assertTrue(norms(read(f"{os.getcwd()}/pytests/test_data")).shape  == (97,))
 
 if __name__ == '__main__':
     unittest.main()
 
 # if __name__ == "__main__":
-#     print(norms(read(f"{Path.cwd()}/pytests/test_data")).shape)
+#     print(norms(read(f"{os.getcwd()}/pytests/test_data")).shape)
